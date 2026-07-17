@@ -1177,6 +1177,9 @@ footer .heart {
     <strong>El Pollito de Arica</strong>
     Tradición ariqueña desde 1998<br>
     Hecho con <span class="heart">♥</span> en el Norte de Chile
+    <div style="margin-top:14px;">
+      <a href="admin-pollito-arica.html" style="color:var(--ink-mute); font-size:10px; text-decoration:underline; letter-spacing:0.5px;">Panel de administración</a>
+    </div>
   </footer>
 
 </div>
@@ -1513,6 +1516,39 @@ const badgeLabels = {
   hot: 'Picante',
   veg: 'Vegetariano'
 };
+
+/* ============================================================
+   PERSISTENCE: read from localStorage (shared with admin panel)
+   If admin-pollito-arica.html saved changes, use them; otherwise use the
+   default menu defined above.
+   Key: 'epa_menu_v1'
+   ============================================================ */
+const STORAGE_KEY = 'epa_menu_v1';
+try {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    const parsed = JSON.parse(saved);
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      // Replace the default menu with the saved one
+      menu.length = 0;
+      parsed.forEach(c => menu.push(c));
+    }
+  }
+} catch (e) { /* ignore corrupt storage */ }
+
+/* Listen for changes from other tabs (e.g. admin panel open in another tab) */
+window.addEventListener('storage', e => {
+  if (e.key === STORAGE_KEY && e.newValue) {
+    try {
+      const parsed = JSON.parse(e.newValue);
+      if (Array.isArray(parsed)) {
+        menu.length = 0;
+        parsed.forEach(c => menu.push(c));
+        renderMenu();
+      }
+    } catch (err) {}
+  }
+});
 function badgeHTML(b) {
   if (!b || !badgeLabels[b]) return '';
   return `<span class="badge badge-${b}">${badgeLabels[b]}</span>`;
