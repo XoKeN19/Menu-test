@@ -16,7 +16,8 @@
           "Receta de la casa",
           "Desde 1998"
         ],
-        "badge": "best"
+        "badge": "best",
+        "hidden": true
       },
       {
         "name": "Pollo a la Parrilla",
