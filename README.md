@@ -60,6 +60,17 @@ la carpeta `images/` del repositorio con tu mismo token. La imagen queda enlazad
 al plato automáticamente. También puedes seguir pegando una URL si lo prefieres.
 Recuerda pulsar **Publicar en GitHub** para que los cambios se vean en el menú.
 
+### Mostrar u ocultar platos (sin borrarlos)
+Cada categoría funciona como **acordeón** y muestra **todos** tus platos, incluidos
+los que no aparecen en el menú. Junto a cada plato hay un botón de ojo 👁:
+- 👁 (verde) = el plato **se muestra** en el menú.
+- 🚫 (gris) = el plato está **oculto** (se ve atenuado con "Oculto" en el panel,
+  pero **no** aparece en el menú público).
+
+Con un clic lo enciendes o apagas. El contador de cada categoría muestra
+`visibles/total`. Así puedes tener un catálogo de platos y elegir cuáles se
+muestran sin tener que recrearlos. Recuerda **Publicar en GitHub** para aplicar.
+
 > Si prefieres solo ver/editar sin publicar, usa "Entrar solo en modo local".
 
 ## Si haces un *fork* del repo

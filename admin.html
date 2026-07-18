@@ -362,6 +362,19 @@ input, textarea, select, button { font-family: inherit; }
 .icon-btn.del { color: var(--danger); border-color: rgba(192,57,43,0.2); }
 .icon-btn.edit:active { background: rgba(42,110,201,0.08); }
 .icon-btn.del:active { background: rgba(192,57,43,0.08); }
+.icon-btn.vis { color: var(--success); border-color: rgba(45,100,32,0.25); }
+.icon-btn.vis.off { color: var(--ink-mute); border-color: var(--line); }
+.icon-btn.vis:active { background: rgba(45,100,32,0.08); }
+
+/* Hidden (not shown in menu) items */
+.item-row.is-hidden { opacity: 0.6; background: repeating-linear-gradient(45deg, var(--bg-soft), var(--bg-soft) 8px, #f0e8db 8px, #f0e8db 16px); }
+.item-row.is-hidden .item-thumb { filter: grayscale(1); }
+.item-hidden-tag {
+  display: inline-block; font-size: 8.5px; font-weight: 700;
+  padding: 2px 6px; border-radius: var(--r-pill);
+  background: var(--ink-mute); color: #fff; letter-spacing: .3px;
+  text-transform: uppercase; margin-top: 4px;
+}
 
 .btn-add-item {
   display: flex;
@@ -1163,21 +1176,23 @@ function render() {
           <div class="cat-sub">${escapeHtml(cat.subtitle || '')}</div>
         </div>
         <div class="cat-meta">
-          <span class="cat-count">${cat.items.length}</span>
+          <span class="cat-count">${cat.items.filter(it => !it.hidden).length}/${cat.items.length}</span>
           <span class="cat-chev">▾</span>
         </div>
       </div>
       <div class="cat-body">
         <div class="cat-body-inner">
           ${cat.items.map((it, ii) => `
-            <div class="item-row" data-ci="${ci}" data-ii="${ii}">
+            <div class="item-row ${it.hidden ? 'is-hidden' : ''}" data-ci="${ci}" data-ii="${ii}">
               <img class="item-thumb" src="${it.img || ''}" alt="" loading="lazy" onerror="this.style.background='var(--surface)';this.removeAttribute('src');">
               <div class="item-info">
                 <div class="item-name">${escapeHtml(it.name)}</div>
                 <div class="item-price">${escapeHtml(it.price)}</div>
                 ${it.badge ? `<div class="item-badges"><span class="item-badge-mini ${it.badge}">${badgeLabels[it.badge]||''}</span></div>` : ''}
+                ${it.hidden ? '<div><span class="item-hidden-tag">Oculto</span></div>' : ''}
               </div>
               <div class="item-actions">
+                <button class="icon-btn vis ${it.hidden ? 'off' : ''}" data-toggle-item="${ci}:${ii}" aria-label="${it.hidden ? 'Mostrar en el menú' : 'Ocultar del menú'}" title="${it.hidden ? 'Mostrar en el menú' : 'Ocultar del menú'}">${it.hidden ? '🚫' : '👁'}</button>
                 <button class="icon-btn edit" data-edit-item="${ci}:${ii}" aria-label="Editar plato">✎</button>
                 <button class="icon-btn del" data-del-item="${ci}:${ii}" aria-label="Eliminar plato">×</button>
               </div>
@@ -1207,6 +1222,19 @@ function render() {
       e.stopPropagation();
       const [ci, ii] = b.dataset.editItem.split(':').map(Number);
       openItemEditor(ci, ii);
+    });
+  });
+  catList.querySelectorAll('[data-toggle-item]').forEach(b => {
+    b.addEventListener('click', e => {
+      e.stopPropagation();
+      const [ci, ii] = b.dataset.toggleItem.split(':').map(Number);
+      const it = menu[ci].items[ii];
+      it.hidden = !it.hidden;
+      persist();
+      render();
+      const row = catList.querySelector(`.cat-row[data-ci="${ci}"]`);
+      if (row) row.classList.add('expanded');
+      showToast(it.hidden ? 'Plato oculto del menú' : 'Plato visible en el menú');
     });
   });
   catList.querySelectorAll('[data-del-item]').forEach(b => {

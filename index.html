@@ -1572,10 +1572,10 @@ function badgeHTML(b) {
   return `<span class="badge badge-${b}">${badgeLabels[b]}</span>`;
 }
 
-/* ---------- Flatten items for search ---------- */
+/* ---------- Flatten items for search (only items shown in the menu) ---------- */
 function allItems() {
   const out = [];
-  menu.forEach(cat => cat.items.forEach(it => out.push({ ...it, catKey: cat.key })));
+  menu.forEach(cat => cat.items.forEach(it => { if (!it.hidden) out.push({ ...it, catKey: cat.key }); }));
   return out;
 }
 
@@ -1604,6 +1604,7 @@ function renderMenu() {
 
   cats.forEach(cat => {
     const items = cat.items.filter(it => {
+      if (it.hidden) return false;
       if (!q) return true;
       const hay = (it.name + ' ' + it.short + ' ' + it.desc + ' ' + (it.tags || []).join(' ')).toLowerCase();
       return hay.includes(q);
