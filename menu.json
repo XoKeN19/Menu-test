@@ -7,16 +7,16 @@
     "items": [
       {
         "name": "Pollo Entero al Horno",
-        "price": "$9.900",
+        "price": "$12.900",
         "short": "Dorado, jugoso, con especias de la casa",
         "desc": "Pollo entero marinado por 12 horas en hierbas frescas, ajo y especias del norte. Horneado lentamente para lograr piel crujiente y dorada, con carne tierna y jugosa por dentro. Servido con papas rústicas y pebre de la casa.",
+        "img": "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=600&q=75",
         "tags": [
           "4 personas",
           "Receta de la casa",
           "Desde 1998"
         ],
-        "badge": "best",
-        "img": "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=600&q=75"
+        "badge": "best"
       },
       {
         "name": "Pollo a la Parrilla",
