@@ -795,6 +795,25 @@ input, textarea, select, button { font-family: inherit; }
   color: #fff; border-color: transparent;
 }
 .tool-btn.publish:disabled { opacity: .55; }
+
+/* ---------- Image uploader ---------- */
+.img-uploader { display: flex; gap: 12px; align-items: flex-start; margin-top: 8px; }
+.img-preview {
+  width: 68px; height: 68px; flex: 0 0 68px;
+  border-radius: var(--r-sm); object-fit: cover;
+  background: var(--bg-soft); border: 1px solid var(--line);
+}
+.img-uploader .uploader-col { flex: 1; min-width: 0; }
+.btn-upload {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 14px; border-radius: var(--r-pill);
+  border: 1px solid var(--line); background: var(--surface);
+  color: var(--ink); font-size: 12.5px; font-weight: 600; cursor: pointer;
+}
+.btn-upload:disabled { opacity: .5; cursor: default; }
+.img-hint { font-size: 11px; color: var(--ink-mute); margin-top: 6px; line-height: 1.5; }
+.img-hint.err { color: var(--danger); }
+.img-hint.ok { color: var(--success); }
 </style>
 </head>
 <body>
@@ -1257,8 +1276,16 @@ function openCategoryEditor(ci) {
       <input type="text" id="f_key" value="${escapeHtml(cat.key)}" placeholder="pollos" ${!isNew ? 'readonly' : ''}>
     </div>
     <div class="field">
-      <label>URL de imagen (miniatura)</label>
-      <input type="url" id="f_thumb" value="${escapeHtml(cat.thumb)}" placeholder="https://...">
+      <label>Imagen (miniatura)</label>
+      <input type="url" id="f_thumb" value="${escapeHtml(cat.thumb)}" placeholder="Pega una URL o sube una imagen">
+      <div class="img-uploader">
+        <img class="img-preview" id="thumbPreview" alt="">
+        <div class="uploader-col">
+          <input type="file" id="thumbFile" accept="image/*" style="display:none;">
+          <button type="button" class="btn-upload" id="thumbUploadBtn">Subir imagen…</button>
+          <div class="img-hint" id="thumbHint"></div>
+        </div>
+      </div>
     </div>
     <div class="sheet-actions">
       <button class="btn-secondary" id="catCancel">Cancelar</button>
@@ -1267,6 +1294,11 @@ function openCategoryEditor(ci) {
   `;
 
   openSheet();
+
+  wireUploader(
+    { file: 'thumbFile', btn: 'thumbUploadBtn', url: 'f_thumb', preview: 'thumbPreview', hint: 'thumbHint' },
+    () => (document.getElementById('f_title').value.trim() || cat.key || 'cat') + '-thumb'
+  );
 
   document.getElementById('catCancel').onclick = closeSheet;
   document.getElementById('catSave').onclick = () => {
@@ -1340,8 +1372,16 @@ function openItemEditor(ci, ii) {
       <textarea id="f_desc" placeholder="Descripción detallada del plato">${escapeHtml(item.desc)}</textarea>
     </div>
     <div class="field">
-      <label>URL de imagen del plato</label>
-      <input type="url" id="f_img" value="${escapeHtml(item.img)}" placeholder="https://...">
+      <label>Imagen del plato</label>
+      <input type="url" id="f_img" value="${escapeHtml(item.img)}" placeholder="Pega una URL o sube una imagen">
+      <div class="img-uploader">
+        <img class="img-preview" id="imgPreview" alt="">
+        <div class="uploader-col">
+          <input type="file" id="imgFile" accept="image/*" style="display:none;">
+          <button type="button" class="btn-upload" id="imgUploadBtn">Subir imagen…</button>
+          <div class="img-hint" id="imgHint"></div>
+        </div>
+      </div>
     </div>
     <div class="field">
       <label>Etiquetas (presiona Enter para agregar)</label>
@@ -1357,6 +1397,11 @@ function openItemEditor(ci, ii) {
   `;
 
   openSheet();
+
+  wireUploader(
+    { file: 'imgFile', btn: 'imgUploadBtn', url: 'f_img', preview: 'imgPreview', hint: 'imgHint' },
+    () => (document.getElementById('f_name').value.trim() || menu[ci].key || 'plato')
+  );
 
   // Tags logic
   let tagsArr = (item.tags || []).slice();
@@ -1576,6 +1621,112 @@ async function publishToGitHub() {
 }
 
 document.getElementById('btnPublish').addEventListener('click', publishToGitHub);
+
+/* ============================================================
+   IMAGE UPLOAD (commits the file to images/ in the repo)
+   ============================================================ */
+function readAsDataURL(fileOrBlob) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result);
+    r.onerror = reject;
+    r.readAsDataURL(fileOrBlob);
+  });
+}
+
+/* Downscale + compress to keep images light (faster load, smaller commits). */
+async function compressImage(file, maxDim = 1600, quality = 0.85) {
+  try {
+    const dataUrl = await readAsDataURL(file);
+    const img = await new Promise((res, rej) => {
+      const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = dataUrl;
+    });
+    let { width, height } = img;
+    if (Math.max(width, height) > maxDim) {
+      const s = maxDim / Math.max(width, height);
+      width = Math.round(width * s); height = Math.round(height * s);
+    }
+    const canvas = document.createElement('canvas');
+    canvas.width = width; canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, width, height);
+    ctx.drawImage(img, 0, 0, width, height);
+    const blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', quality));
+    return blob || file;
+  } catch (e) {
+    return file; // if anything fails, upload the original
+  }
+}
+
+/* Upload an image file to the repo. Returns the relative path (e.g. images/x.jpg). */
+async function uploadImage(file, prefix) {
+  if (!getToken()) throw new Error('Conéctate con GitHub para subir imágenes.');
+  if (!file.type || !file.type.startsWith('image/')) throw new Error('El archivo no es una imagen.');
+  const blob = await compressImage(file);
+  const dataUrl = await readAsDataURL(blob);
+  const base64 = dataUrl.split(',')[1];
+  const path = `images/${slugify(prefix || 'img')}-${Date.now()}.jpg`;
+  const url = `https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${path}`;
+  const body = { message: `Subir imagen ${path}`, content: base64, branch: GH.branch };
+  const res = await ghRequest(url, { method: 'PUT', body: JSON.stringify(body) });
+  if (res.status === 401) { setToken(''); updateConnUI(); openGate(); throw new Error('Token inválido o expirado.'); }
+  if (!res.ok) {
+    let detail = `Error ${res.status}`;
+    try { const j = await res.json(); if (j.message) detail = j.message; } catch (e) {}
+    throw new Error(detail);
+  }
+  return path;
+}
+
+/* Wire an "upload" control to a URL text input + preview inside the edit sheet. */
+function wireUploader(ids, getPrefix) {
+  const fileEl = document.getElementById(ids.file);
+  const btnEl = document.getElementById(ids.btn);
+  const urlEl = document.getElementById(ids.url);
+  const previewEl = document.getElementById(ids.preview);
+  const hintEl = document.getElementById(ids.hint);
+  if (!fileEl || !btnEl) return;
+
+  previewEl.onerror = () => previewEl.removeAttribute('src');
+  function refreshPreview() {
+    const v = urlEl.value.trim();
+    if (v) previewEl.src = v;
+    else previewEl.removeAttribute('src');
+  }
+  urlEl.addEventListener('input', refreshPreview);
+  refreshPreview();
+
+  if (!getToken()) {
+    btnEl.disabled = true;
+    hintEl.textContent = 'Conéctate con GitHub para subir imágenes. También puedes pegar una URL arriba.';
+    return;
+  }
+
+  btnEl.addEventListener('click', () => fileEl.click());
+  fileEl.addEventListener('change', async e => {
+    const file = e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    btnEl.disabled = true;
+    const label = btnEl.textContent;
+    btnEl.textContent = 'Subiendo…';
+    hintEl.className = 'img-hint';
+    hintEl.textContent = 'Subiendo imagen…';
+    try {
+      const path = await uploadImage(file, getPrefix ? getPrefix() : 'img');
+      urlEl.value = path;
+      refreshPreview();
+      hintEl.className = 'img-hint ok';
+      hintEl.textContent = 'Imagen subida ✓ (se aplica al guardar/publicar)';
+    } catch (err) {
+      hintEl.className = 'img-hint err';
+      hintEl.textContent = 'Error: ' + err.message;
+    } finally {
+      btnEl.disabled = false;
+      btnEl.textContent = label;
+    }
+  });
+}
 
 /* ============================================================
    CONNECTION GATE / UI

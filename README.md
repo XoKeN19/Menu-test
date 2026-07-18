@@ -53,6 +53,13 @@ Menú de restaurante 100% estático (HTML/CSS/JS, sin backend) que se publica en
 3. Edita categorías/platos y pulsa **Publicar en GitHub**.
 4. Espera ~1 minuto (lo que tarda GitHub Pages en actualizar) y recarga el menú.
 
+### Subir tus propias imágenes
+Al editar un plato o una categoría verás el botón **"Subir imagen…"**. Elige una
+foto desde tu teléfono o computador: se optimiza (se reduce de tamaño) y se sube a
+la carpeta `images/` del repositorio con tu mismo token. La imagen queda enlazada
+al plato automáticamente. También puedes seguir pegando una URL si lo prefieres.
+Recuerda pulsar **Publicar en GitHub** para que los cambios se vean en el menú.
+
 > Si prefieres solo ver/editar sin publicar, usa "Entrar solo en modo local".
 
 ## Si haces un *fork* del repo
