@@ -723,20 +723,113 @@ input, textarea, select, button { font-family: inherit; }
   margin-bottom: 4px;
 }
 .empty p { font-size: 12px; }
+
+/* ---------- GitHub connection gate ---------- */
+.gate {
+  position: fixed; inset: 0; z-index: 200;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+}
+.gate.hidden { display: none; }
+.gate-box {
+  width: 100%; max-width: 380px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-lg);
+  padding: 26px 22px;
+}
+.gate-logo {
+  width: 52px; height: 52px; border-radius: var(--r-md);
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  color: #fff; display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', Georgia, serif; font-weight: 800; font-size: 24px;
+  margin-bottom: 16px;
+}
+.gate-box h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 20px; color: var(--ink); margin-bottom: 6px;
+}
+.gate-box p { font-size: 12.5px; color: var(--ink-mute); line-height: 1.6; margin-bottom: 18px; }
+.gate-field { margin-bottom: 14px; }
+.gate-field label { display:block; font-size: 12px; font-weight: 600; color: var(--ink-soft); margin-bottom: 6px; }
+.gate-field input {
+  width: 100%; padding: 12px 14px;
+  border: 1px solid var(--line); border-radius: var(--r-sm);
+  font-size: 14px; font-family: inherit; color: var(--ink);
+  background: var(--bg-soft); outline: none;
+}
+.gate-field input:focus { border-color: var(--brand); background: var(--surface); }
+.gate-btn {
+  width: 100%; padding: 13px; border: none; border-radius: var(--r-pill);
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  color: #fff; font-size: 14px; font-weight: 700; font-family: inherit;
+  cursor: pointer; transition: opacity .2s var(--ease);
+}
+.gate-btn:disabled { opacity: .5; cursor: default; }
+.gate-link {
+  display: block; width: 100%; text-align: center; margin-top: 14px;
+  background: none; border: none; color: var(--ink-mute);
+  font-size: 12.5px; font-family: inherit; cursor: pointer; text-decoration: underline;
+}
+.gate-help { margin-top: 16px; font-size: 11.5px; color: var(--ink-mute); line-height: 1.6; }
+.gate-help a { color: var(--brand); }
+.gate-msg { font-size: 12.5px; margin-top: 10px; min-height: 16px; }
+.gate-msg.err { color: var(--danger); }
+.gate-msg.ok { color: var(--success); }
+
+/* ---------- Connection pill in topbar ---------- */
+.conn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 600;
+  padding: 4px 10px; border-radius: var(--r-pill);
+  background: var(--bg-soft); color: var(--ink-mute);
+  border: 1px solid var(--line); cursor: pointer;
+}
+.conn .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ink-mute); }
+.conn.online { color: var(--success); border-color: rgba(45,100,32,.25); }
+.conn.online .dot { background: var(--success); }
+.tool-btn.publish {
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  color: #fff; border-color: transparent;
+}
+.tool-btn.publish:disabled { opacity: .55; }
 </style>
 </head>
 <body>
+
+<!-- ============ LOGIN / GITHUB GATE ============ -->
+<div class="gate" id="gate">
+  <div class="gate-box">
+    <div class="gate-logo">P</div>
+    <h2>Panel de administración</h2>
+    <p>Para <strong>publicar</strong> cambios en el menú necesitas un token de acceso de GitHub con permiso sobre este repositorio. Solo quien tenga un token válido puede modificar el menú.</p>
+    <div class="gate-field">
+      <label for="gateToken">Token de GitHub (fine-grained)</label>
+      <input type="password" id="gateToken" placeholder="github_pat_..." autocomplete="off" spellcheck="false">
+    </div>
+    <button class="gate-btn" id="gateConnect">Conectar y entrar</button>
+    <div class="gate-msg" id="gateMsg"></div>
+    <button class="gate-link" id="gateLocal">Entrar solo en modo local (sin publicar)</button>
+    <div class="gate-help">
+      El token se guarda <strong>solo en este dispositivo</strong> (nunca se sube al repositorio).
+      <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Crear un token fino</a>
+      con acceso <em>solo</em> a este repo y permiso <em>Contents: Read and write</em>.
+    </div>
+  </div>
+</div>
 
 <div class="app">
 
   <!-- ============ TOP BAR ============ -->
   <div class="topbar">
-    <a href="menu-pollito-arica.html" class="tb-back" aria-label="Volver al menú">‹</a>
+    <a href="index.html" class="tb-back" aria-label="Volver al menú">‹</a>
     <div class="tb-info">
       <div class="tb-title">Panel de administración</div>
       <div class="tb-sub">El Pollito de Arica</div>
     </div>
-    <button class="tb-action" id="topAdd" aria-label="Agregar categoría">+</button>
+    <button class="conn" id="connPill" title="Estado de conexión con GitHub"><span class="dot"></span><span id="connText">Local</span></button>
   </div>
 
   <!-- ============ DASHBOARD ============ -->
@@ -760,7 +853,8 @@ input, textarea, select, button { font-family: inherit; }
 
   <!-- ============ TOOLBAR ============ -->
   <div class="toolbar">
-    <button class="tool-btn save" id="btnSave">Guardar</button>
+    <button class="tool-btn publish" id="btnPublish">Publicar en GitHub</button>
+    <button class="tool-btn save" id="btnSave">Guardar borrador</button>
     <button class="tool-btn" id="btnExport">Exportar</button>
     <button class="tool-btn" id="btnImport">Importar</button>
     <button class="tool-btn danger" id="btnReset">Reset</button>
@@ -803,10 +897,27 @@ input, textarea, select, button { font-family: inherit; }
 <script>
 /* ============================================================
    ADMIN PANEL — El Pollito de Arica
-   Shares localStorage with main menu (key: 'epa_menu_v1')
+   - Draft is kept in localStorage (key: 'epa_menu_v1'), shared with the
+     main menu for live preview on this device.
+   - "Publicar en GitHub" commits menu.json to the repo via the GitHub API,
+     so every visitor sees the change. Publishing requires a GitHub token
+     (stored only in this browser, never in the repo).
    ============================================================ */
 
 const STORAGE_KEY = 'epa_menu_v1';
+const TOKEN_KEY = 'epa_gh_token';
+const MENU_FILE = 'menu.json';
+
+/* GitHub repo this panel publishes to. If you fork the repo, change these. */
+const GH = {
+  owner: 'XoKeN19',
+  repo: 'Menu-test',
+  branch: 'main',
+  path: 'menu.json'
+};
+
+function getToken() { try { return localStorage.getItem(TOKEN_KEY) || ''; } catch (e) { return ''; } }
+function setToken(t) { try { t ? localStorage.setItem(TOKEN_KEY, t) : localStorage.removeItem(TOKEN_KEY); } catch (e) {} }
 
 /* Default menu (matches main menu). Used if no saved data exists. */
 const defaultMenu = [
@@ -955,17 +1066,30 @@ const defaultMenu = [
 
 /* ---------- State ---------- */
 let menu = loadMenu();
+let hadLocalDraft = false;
 
 function loadMenu() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) { hadLocalDraft = true; return JSON.parse(raw); }
   } catch (e) {}
   return JSON.parse(JSON.stringify(defaultMenu));
 }
 
 function persist() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(menu));
+}
+
+/* If there's no local draft yet, load the currently published menu.json so the
+   editor starts from what visitors actually see. */
+function loadPublished() {
+  if (hadLocalDraft) return;
+  fetch(MENU_FILE + '?t=' + Date.now(), { cache: 'no-store' })
+    .then(r => (r.ok ? r.json() : null))
+    .then(data => {
+      if (Array.isArray(data) && data.length > 0) { menu = data; render(); }
+    })
+    .catch(() => {});
 }
 
 /* ---------- DOM refs ---------- */
@@ -1351,7 +1475,6 @@ confirmEl.addEventListener('click', e => {
 });
 
 /* ---------- Top add button + FAB ---------- */
-document.getElementById('topAdd').addEventListener('click', () => openCategoryEditor(null));
 document.getElementById('fabAdd').addEventListener('click', () => openCategoryEditor(null));
 
 /* ---------- Toolbar actions ---------- */
@@ -1360,8 +1483,154 @@ document.getElementById('btnSave').addEventListener('click', () => {
   const now = new Date();
   const hh = String(now.getHours()).padStart(2,'0');
   const mm = String(now.getMinutes()).padStart(2,'0');
-  lastSaved.textContent = `Guardado ${hh}:${mm}`;
-  showToast('Menú guardado ✓');
+  lastSaved.textContent = `Borrador ${hh}:${mm}`;
+  showToast('Borrador guardado ✓');
+});
+
+/* ============================================================
+   GITHUB PUBLISH
+   ============================================================ */
+function utf8ToBase64(str) {
+  return btoa(unescape(encodeURIComponent(str)));
+}
+
+async function ghRequest(url, options = {}) {
+  const token = getToken();
+  const res = await fetch(url, {
+    ...options,
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+      ...(options.headers || {})
+    }
+  });
+  return res;
+}
+
+/* Verify a token grants write access to the repo. Returns {ok, canPush, msg}. */
+async function verifyToken(token) {
+  try {
+    const res = await fetch(`https://api.github.com/repos/${GH.owner}/${GH.repo}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28'
+      }
+    });
+    if (res.status === 401) return { ok: false, msg: 'Token inválido o expirado.' };
+    if (res.status === 404) return { ok: false, msg: 'El token no tiene acceso a este repositorio.' };
+    if (!res.ok) return { ok: false, msg: `Error de GitHub (${res.status}).` };
+    const data = await res.json();
+    const canPush = !!(data.permissions && data.permissions.push);
+    if (!canPush) return { ok: false, msg: 'El token no tiene permiso de escritura (Contents: Read and write).' };
+    return { ok: true, canPush: true };
+  } catch (e) {
+    return { ok: false, msg: 'No se pudo conectar con GitHub. Revisa tu internet.' };
+  }
+}
+
+/* Get the current SHA of menu.json (needed to update it). null if it doesn't exist. */
+async function getFileSha() {
+  const url = `https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${encodeURIComponent(GH.path)}?ref=${encodeURIComponent(GH.branch)}`;
+  const res = await ghRequest(url);
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error(`No se pudo leer ${GH.path} (${res.status}).`);
+  const data = await res.json();
+  return data.sha;
+}
+
+async function publishToGitHub() {
+  const token = getToken();
+  if (!token) { openGate(); showToast('Conéctate con GitHub para publicar'); return; }
+  const btn = document.getElementById('btnPublish');
+  const original = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Publicando…';
+  try {
+    const sha = await getFileSha();
+    const body = {
+      message: `Actualizar menú · ${new Date().toLocaleString('es-CL')}`,
+      content: utf8ToBase64(JSON.stringify(menu, null, 2) + '\n'),
+      branch: GH.branch
+    };
+    if (sha) body.sha = sha;
+    const url = `https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${encodeURIComponent(GH.path)}`;
+    const res = await ghRequest(url, { method: 'PUT', body: JSON.stringify(body) });
+    if (res.status === 401) { setToken(''); updateConnUI(); openGate(); throw new Error('Token inválido o expirado.'); }
+    if (res.status === 409) throw new Error('Conflicto: el menú cambió en GitHub. Recarga e intenta de nuevo.');
+    if (!res.ok) {
+      let detail = `Error ${res.status}`;
+      try { const j = await res.json(); if (j.message) detail = j.message; } catch (e) {}
+      throw new Error(detail);
+    }
+    persist();
+    lastSaved.textContent = `Publicado ${new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })}`;
+    showToast('Menú publicado en GitHub ✓');
+  } catch (e) {
+    showToast('Error: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = original;
+  }
+}
+
+document.getElementById('btnPublish').addEventListener('click', publishToGitHub);
+
+/* ============================================================
+   CONNECTION GATE / UI
+   ============================================================ */
+const gate = document.getElementById('gate');
+const gateToken = document.getElementById('gateToken');
+const gateMsg = document.getElementById('gateMsg');
+const connPill = document.getElementById('connPill');
+const connText = document.getElementById('connText');
+
+function updateConnUI() {
+  const online = !!getToken();
+  connPill.classList.toggle('online', online);
+  connText.textContent = online ? 'Conectado' : 'Local';
+  const pub = document.getElementById('btnPublish');
+  pub.title = online ? 'Publicar los cambios en GitHub' : 'Conéctate con GitHub para publicar';
+}
+
+function openGate() { gate.classList.remove('hidden'); gateMsg.textContent = ''; gateMsg.className = 'gate-msg'; }
+function closeGate() { gate.classList.add('hidden'); }
+
+document.getElementById('gateConnect').addEventListener('click', async () => {
+  const token = gateToken.value.trim();
+  if (!token) { gateMsg.textContent = 'Ingresa tu token.'; gateMsg.className = 'gate-msg err'; return; }
+  const btn = document.getElementById('gateConnect');
+  btn.disabled = true; btn.textContent = 'Verificando…';
+  const result = await verifyToken(token);
+  btn.disabled = false; btn.textContent = 'Conectar y entrar';
+  if (!result.ok) { gateMsg.textContent = result.msg; gateMsg.className = 'gate-msg err'; return; }
+  setToken(token);
+  gateToken.value = '';
+  gateMsg.textContent = 'Conectado ✓'; gateMsg.className = 'gate-msg ok';
+  updateConnUI();
+  loadPublished();
+  setTimeout(closeGate, 400);
+});
+
+gateToken.addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('gateConnect').click(); });
+
+document.getElementById('gateLocal').addEventListener('click', () => {
+  updateConnUI();
+  loadPublished();
+  closeGate();
+});
+
+connPill.addEventListener('click', () => {
+  if (getToken()) {
+    askConfirm('Desconectar', '¿Quitar el token de GitHub de este dispositivo? Podrás seguir editando en local pero no publicar.', () => {
+      setToken('');
+      updateConnUI();
+      showToast('Desconectado de GitHub');
+    });
+  } else {
+    openGate();
+  }
 });
 
 document.getElementById('btnExport').addEventListener('click', () => {
@@ -1417,6 +1686,9 @@ function slugify(s) {
 
 /* ---------- Init ---------- */
 render();
+updateConnUI();
+if (getToken()) { loadPublished(); closeGate(); }
+else { openGate(); }
 </script>
 </body>
 </html>

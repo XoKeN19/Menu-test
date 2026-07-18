@@ -1518,23 +1518,41 @@ const badgeLabels = {
 };
 
 /* ============================================================
-   PERSISTENCE: read from localStorage (shared with admin panel)
-   If admin-pollito-arica.html saved changes, use them; otherwise use the
-   default menu defined above.
-   Key: 'epa_menu_v1'
+   PERSISTENCE: read the published menu from menu.json (source of truth).
+   1) Paint instantly from a local cache (fast + works offline).
+   2) Fetch menu.json and update; this is what the admin panel publishes
+      to GitHub, so every visitor sees the same, up-to-date menu.
+   The embedded `menu` array above is the last-resort fallback.
+   Key: 'epa_menu_v1'  ·  File: 'menu.json'
    ============================================================ */
 const STORAGE_KEY = 'epa_menu_v1';
-try {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  if (saved) {
-    const parsed = JSON.parse(saved);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      // Replace the default menu with the saved one
-      menu.length = 0;
-      parsed.forEach(c => menu.push(c));
-    }
+const MENU_URL = 'menu.json';
+
+function applyMenu(parsed) {
+  if (Array.isArray(parsed) && parsed.length > 0) {
+    menu.length = 0;
+    parsed.forEach(c => menu.push(c));
+    return true;
   }
+  return false;
+}
+
+// 1) Instant paint from cache
+try {
+  const cached = localStorage.getItem(STORAGE_KEY);
+  if (cached) applyMenu(JSON.parse(cached));
 } catch (e) { /* ignore corrupt storage */ }
+
+// 2) Fetch the published menu.json and refresh
+fetch(MENU_URL, { cache: 'no-store' })
+  .then(r => { if (!r.ok) throw new Error('menu.json not found'); return r.json(); })
+  .then(data => {
+    if (applyMenu(data)) {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {}
+      renderMenu();
+    }
+  })
+  .catch(() => { /* keep cache / embedded default */ });
 
 /* Listen for changes from other tabs (e.g. admin panel open in another tab) */
 window.addEventListener('storage', e => {
