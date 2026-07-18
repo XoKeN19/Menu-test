@@ -228,22 +228,23 @@
         "price": "$1.700",
         "short": "Cremoso con mantequilla",
         "desc": "Puré de papas cremoso hecho con mantequilla, leche y nuez moscada. Textura suave y sedosa que combina con todos nuestros platos principales.",
+        "img": "images/pure-de-papas-1784346854024.jpg",
         "tags": [
           "Casero"
         ],
-        "img": "https://images.unsplash.com/photo-1619775063103-1c862c1f6f7d?auto=format&fit=crop&w=600&q=75"
+        "badge": ""
       },
       {
         "name": "Choclo Cocido",
         "price": "$1.500",
         "short": "Fresco de los valles del norte",
         "desc": "Choclo cocido al vapor con mantequilla y sal. Producto fresco de los valles de Lluta y Azapa, dulce y tierno. Una guarnición liviana y natural.",
+        "img": "images/choclo-cocido-1784346898507.jpg",
         "tags": [
           "Vegetariano",
           "Local"
         ],
-        "badge": "veg",
-        "img": "https://images.unsplash.com/photo-1551759398-ed28908dd607?auto=format&fit=crop&w=600&q=75"
+        "badge": "veg"
       },
       {
         "name": "Palta y Tomate",
