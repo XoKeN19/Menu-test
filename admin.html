@@ -953,145 +953,576 @@ function setToken(t) { try { t ? localStorage.setItem(TOKEN_KEY, t) : localStora
 
 /* Default menu (matches main menu). Used if no saved data exists. */
 const defaultMenu = [
-  { key:'pollos', title:'Pollos', subtitle:'A la leña, al horno y brosterizados',
-    thumb:'https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=200&q=70',
-    items:[
-      { name:'Pollo Entero al Horno', price:'$9.900', short:'Dorado, jugoso, con especias de la casa',
-        desc:'Pollo entero marinado por 12 horas en hierbas frescas, ajo y especias del norte. Horneado lentamente para lograr piel crujiente y dorada, con carne tierna y jugosa por dentro.',
-        tags:['4 personas','Receta de la casa'], badge:'best',
-        img:'https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=600&q=75' },
-      { name:'Pollo a la Parrilla', price:'$10.900', short:'Ahumado al carbón de espino',
-        desc:'Pollo entero cocinado a la parrilla sobre carbón de espino, con ahumado natural y aromático.',
-        tags:['4 personas','A la parrilla'], badge:'best',
-        img:'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=600&q=75' },
-      { name:'1/2 Pollo al Horno', price:'$5.900', short:'Media unidad con papas y ensalada',
-        desc:'Media unidad de pollo al horno con receta tradicional. Acompañado de papas fritas y ensalada chilena.',
-        tags:['2 personas','Clásico'],
-        img:'https://images.unsplash.com/photo-1587593810167-a84920ea0781?auto=format&fit=crop&w=600&q=75' },
-      { name:'1/4 Pollo al Horno', price:'$3.500', short:'Pierna o pechuga, individual',
-        desc:'Cuarto de pollo al horno, a elección de pierna o pestuga. Servido con dos acompañamientos.',
-        tags:['1 persona'],
-        img:'https://images.unsplash.com/photo-1606756790138-261d2b21cd75?auto=format&fit=crop&w=600&q=75' },
-      { name:'Pollo Brosterizado', price:'$6.900', short:'Crujiente estilo broaster, 3 piezas',
-        desc:'Pollo rebozado con mezcla secreta, frito en olla a presión. Extra crujiente por fuera y jugoso por dentro.',
-        tags:['3 piezas','Crujiente'], badge:'new',
-        img:'https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?auto=format&fit=crop&w=600&q=75' },
-      { name:'Alitas BBQ Caseras', price:'$4.900', short:'8 alitas con salsa barbacoa de la casa',
-        desc:'Ocho alitas crujientes bañadas en salsa barbacoa casera con toque ahumado y ligeramente picante.',
-        tags:['8 unidades','Picante leve'], badge:'hot',
-        img:'https://images.unsplash.com/photo-1567620832903-9fc6debc209f?auto=format&fit=crop&w=600&q=75' },
-      { name:'Sándwich de Pollo', price:'$3.900', short:'Pan amasado, pollo crispy, palta',
-        desc:'Pan amasado tostado con pollo crispy, palta, tomate, mayonesa de la casa y pebre.',
-        tags:['1 persona','Sándwich'],
-        img:'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=600&q=75' }
+  {
+    "key": "pescados",
+    "title": "Pescados y Mariscos",
+    "subtitle": "Frescos del Pacífico, al estilo criollo",
+    "thumb": "https://images.unsplash.com/photo-1606756790138-261d2b21cd75?auto=format&fit=crop&w=200&q=70",
+    "items": [
+      {
+        "name": "Reineta a lo Pobre",
+        "price": "$10.900",
+        "short": "Filete frito con huevo, papas y cebolla",
+        "desc": "Filete de reineta fresca frito a la sartén, servido a lo pobre: sobre papas fritas doradas, cebolla caramelizada y dos huevos fritos. Un clásico ariqueño abundante.",
+        "img": "https://images.unsplash.com/photo-1606756790138-261d2b21cd75?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Recomendado",
+          "Abundante"
+        ],
+        "badge": "best",
+        "hidden": false
+      },
+      {
+        "name": "Congrio Frito",
+        "price": "$12.500",
+        "short": "Congrio dorado con ensalada chilena",
+        "desc": "Presa de congrio apanada y frita hasta quedar crujiente por fuera y jugosa por dentro. Acompañado de arroz graneado y ensalada chilena fresca.",
+        "img": "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Fresco del día",
+          "Clásico"
+        ],
+        "hidden": false
+      },
+      {
+        "name": "Salmón a la Plancha",
+        "price": "$11.900",
+        "short": "Con mantequilla de ajo y verduras salteadas",
+        "desc": "Filete de salmón a la plancha con mantequilla de ajo y hierbas, acompañado de verduras salteadas y puré rústico. Opción más liviana y sabrosa.",
+        "img": "https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "A la plancha",
+          "Liviano"
+        ],
+        "badge": "new",
+        "hidden": false
+      },
+      {
+        "name": "Chicharrón de Pescado",
+        "price": "$9.900",
+        "short": "Bocados crujientes con salsa tártara",
+        "desc": "Trozos de pescado apanados y fritos, crocantes, servidos con papas fritas y salsa tártara de la casa. Perfecto para compartir.",
+        "img": "https://images.unsplash.com/photo-1624552184280-9e9631bbeee9?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Para compartir",
+          "Crujiente"
+        ],
+        "badge": "hot",
+        "hidden": false
+      },
+      {
+        "name": "Paila Marina",
+        "price": "$10.500",
+        "short": "Caldillo caliente de mariscos surtidos",
+        "desc": "Tradicional paila marina bien caliente con almejas, choritos, machas, camarones y pescado en un fondo aromático. Reconfortante y llena de sabor a mar.",
+        "img": "https://images.unsplash.com/photo-1608270586620-248524c67de9?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Caliente",
+          "Mariscos"
+        ],
+        "hidden": false
+      },
+      {
+        "name": "Machas a la Parmesana",
+        "price": "$9.500",
+        "short": "Gratinadas con queso al horno",
+        "desc": "Machas frescas gratinadas con queso, un toque de vino blanco y mantequilla, servidas al horno. Entrada marina infaltable.",
+        "img": "https://images.unsplash.com/photo-1607301405390-d831c242f59b?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Gratinado",
+          "Entrada"
+        ],
+        "hidden": false
+      }
     ]
   },
-  { key:'caseros', title:'Caseros', subtitle:'Recetas tradicionales del norte',
-    thumb:'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=200&q=70',
-    items:[
-      { name:'Cazuela de Pollo', price:'$4.500', short:'Tradicional cazuela del norte',
-        desc:'Cazuela de pollo de campo con papas, choclo, zapallo, porotos verdes y arroz. Caldo sustancioso cocinado a fuego lento.',
-        tags:['Plato único','Casero'], badge:'best',
-        img:'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=600&q=75' },
-      { name:'Pastel de Choclo', price:'$5.500', short:'En paila de greda, horneado',
-        desc:'Pastel de choclo con pino de carne, aceitunas, huevo duro, pasas y pechuga. Gratinado en paila de greda.',
-        tags:['Tradicional','Paila de greda'], badge:'best',
-        img:'https://images.unsplash.com/photo-1607301405390-d831c242f59b?auto=format&fit=crop&w=600&q=75' },
-      { name:'Charquicán', price:'$4.200', short:'Con charqui de res, receta nortina',
-        desc:'Charquicán con charqui de res, papas, zapallo, choclo, cebolla y comino. Plato tradicional del norte.',
-        tags:['Casero','Del norte'],
-        img:'https://images.unsplash.com/photo-1606756790138-261d2b21cd75?auto=format&fit=crop&w=600&q=75' },
-      { name:'Empanadas de Pino', price:'$1.500', short:'Fritas, hechas a mano, unidad',
-        desc:'Empanada frita con masa casera, rellena de pino, cebolla, aceituna, huevo duro y pasas.',
-        tags:['Unidad','Frita'], badge:'best',
-        img:'https://images.unsplash.com/photo-1565299543923-37dd37887442?auto=format&fit=crop&w=600&q=75' },
-      { name:'Porotos Granados', price:'$4.800', short:'Con mazamorra y ají color',
-        desc:'Porotos granados con mazamorra de choclo, zapallo, cebolla, ají color y albahaca fresca.',
-        tags:['Temporada','Casero'], badge:'veg',
-        img:'https://images.unsplash.com/photo-1600335895229-6e9bfd668c58?auto=format&fit=crop&w=600&q=75' },
-      { name:'Carbonada de Res', price:'$4.500', short:'Guiso casero con verduras',
-        desc:'Carbonada de carne con papas, zapallo, choclo, zanahoria y arroz. Caldo espeso reconfortante.',
-        tags:['Guiso','Casero'],
-        img:'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=600&q=75' },
-      { name:'Cazuela de Vacuno', price:'$4.800', short:'Carne, papas, choclo y zapallo',
-        desc:'Cazuela de vacuno con carne de primera, papas, choclo, zapallo, zanahoria y arroz.',
-        tags:['Plato único','Casero'],
-        img:'https://images.unsplash.com/photo-1604908554007-1d901d9a0a56?auto=format&fit=crop&w=600&q=75' }
+  {
+    "key": "carnes",
+    "title": "Carnes y Milanesas",
+    "subtitle": "Milanesas, lomos y bistec a lo pobre",
+    "thumb": "https://images.unsplash.com/photo-1624552184280-9e9631bbeee9?auto=format&fit=crop&w=200&q=70",
+    "items": [
+      {
+        "name": "Milanesa a lo Pobre",
+        "price": "$9.900",
+        "short": "Milanesa de vacuno con papas, huevo y cebolla",
+        "desc": "Milanesa de vacuno apanada y frita, servida a lo pobre con papas fritas, cebolla frita y dos huevos. Porción generosa criolla.",
+        "img": "https://images.unsplash.com/photo-1604908554007-1d901d9e0a56?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Abundante",
+          "Clásico"
+        ],
+        "badge": "best",
+        "hidden": false
+      },
+      {
+        "name": "Milanesa Napolitana",
+        "price": "$9.500",
+        "short": "Con jamón, tomate y queso gratinado",
+        "desc": "Milanesa de vacuno cubierta con salsa de tomate, jamón y queso gratinado al horno. Acompañada de papas fritas.",
+        "img": "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Gratinado",
+          "Favorito"
+        ],
+        "hidden": false
+      },
+      {
+        "name": "Lomo a lo Pobre",
+        "price": "$11.900",
+        "short": "Lomo liso con papas, huevo y cebolla",
+        "desc": "Jugoso lomo liso a la plancha servido a lo pobre: papas fritas, cebolla caramelizada y huevos fritos. Un plato contundente.",
+        "img": "https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Premium",
+          "Abundante"
+        ],
+        "hidden": false
+      },
+      {
+        "name": "Bistec a lo Pobre",
+        "price": "$10.500",
+        "short": "Bistec de vacuno bien servido",
+        "desc": "Bistec de vacuno a la plancha, tierno y sabroso, acompañado de papas fritas, cebolla frita y huevos. Clásico de la casa.",
+        "img": "https://images.unsplash.com/photo-1600335895229-6e9bfd668c58?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Clásico"
+        ],
+        "hidden": false
+      },
+      {
+        "name": "Churrasco Italiano",
+        "price": "$8.900",
+        "short": "Sándwich con palta, tomate y mayo",
+        "desc": "Churrasco de vacuno en pan amasado con palta, tomate y mayonesa casera. El sándwich chileno por excelencia.",
+        "img": "https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Sándwich",
+          "Para llevar"
+        ],
+        "hidden": false
+      }
     ]
   },
-  { key:'acompanantes', title:'Acompañamientos', subtitle:'Para completar tu pedido',
-    thumb:'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=200&q=70',
-    items:[
-      { name:'Papas Fritas', price:'$1.800', short:'Cortadas a mano, doble cocción',
-        desc:'Papas fritas cortadas a mano con doble cocción. Crujientes por fuera, suaves por dentro.',
-        tags:['Grande','Vegetariano'], badge:'veg',
-        img:'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=600&q=75' },
-      { name:'Ensalada Chilena', price:'$1.500', short:'Tomate, cebolla y cilantro',
-        desc:'Tomates frescos, cebolla en pluma y cilantro. Aliñada con aceite de oliva y limón de Pica.',
-        tags:['Fresca','Vegetariana'], badge:'veg',
-        img:'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=75' },
-      { name:'Arroz Primavera', price:'$1.500', short:'Con verduras salteadas',
-        desc:'Arroz blanco salteado con zanahoria, choclo, arvejas y pimentón.',
-        tags:['Vegetariano'], badge:'veg',
-        img:'https://images.unsplash.com/photo-1606756790138-261d2b21cd75?auto=format&fit=crop&w=600&q=75' },
-      { name:'Puré de Papas', price:'$1.700', short:'Cremoso con mantequilla',
-        desc:'Puré de papas cremoso con mantequilla, leche y nuez moscada.',
-        tags:['Casero'],
-        img:'https://images.unsplash.com/photo-1619775063103-1c862c1f6f7d?auto=format&fit=crop&w=600&q=75' },
-      { name:'Choclo Cocido', price:'$1.500', short:'Fresco de los valles del norte',
-        desc:'Choclo cocido al vapor con mantequilla. Producto fresco de los valles de Lluta y Azapa.',
-        tags:['Vegetariano','Local'], badge:'veg',
-        img:'https://images.unsplash.com/photo-1551759398-ed28908dd607?auto=format&fit=crop&w=600&q=75' },
-      { name:'Palta y Tomate', price:'$2.000', short:'Palta hass y tomate fresco',
-        desc:'Rebanadas de palta hass con tomates frescos, aceite de oliva y limón.',
-        tags:['Fresca','Vegetariana'], badge:'veg',
-        img:'https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?auto=format&fit=crop&w=600&q=75' }
+  {
+    "key": "pollos",
+    "title": "Pollo",
+    "subtitle": "A la plancha, apanado y milanesa",
+    "thumb": "https://images.unsplash.com/photo-1604908554007-1d901d9e0a56?auto=format&fit=crop&w=200&q=70",
+    "items": [
+      {
+        "name": "Pollo a la Plancha",
+        "price": "$8.900",
+        "short": "Pechuga jugosa con ensalada y arroz",
+        "desc": "Pechuga de pollo a la plancha condimentada con hierbas, acompañada de arroz graneado y ensalada fresca. Opción sana y sabrosa.",
+        "img": "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Liviano",
+          "Saludable"
+        ],
+        "hidden": false
+      },
+      {
+        "name": "Milanesa de Pollo",
+        "price": "$8.500",
+        "short": "Apanada crujiente con papas fritas",
+        "desc": "Milanesa de pollo apanada y frita, crujiente por fuera y jugosa por dentro, con papas fritas doradas.",
+        "img": "https://images.unsplash.com/photo-1587593810167-a84920ea0781?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Clásico",
+          "Favorito"
+        ],
+        "badge": "best",
+        "hidden": false
+      },
+      {
+        "name": "Pollo Apanado",
+        "price": "$8.900",
+        "short": "Presas doradas con papas y ensalada",
+        "desc": "Presas de pollo apanadas y fritas, servidas con papas fritas y ensalada chilena. Ideal para toda la familia.",
+        "img": "https://images.unsplash.com/photo-1581636625402-29b2a704ef14?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Familiar"
+        ],
+        "hidden": false
+      },
+      {
+        "name": "Pechuga a lo Pobre",
+        "price": "$9.500",
+        "short": "Pechuga con papas, huevo y cebolla",
+        "desc": "Pechuga de pollo a la plancha servida a lo pobre con papas fritas, cebolla y huevos fritos. Abundante y rico.",
+        "img": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Abundante"
+        ],
+        "hidden": false
+      }
     ]
   },
-  { key:'bebestibles', title:'Bebestibles', subtitle:'Bebidas, jugos y cervezas',
-    thumb:'https://images.unsplash.com/photo-1624552184280-9e9631bbeee9?auto=format&fit=crop&w=200&q=70',
-    items:[
-      { name:'Bebida 1.5L', price:'$1.800', short:'Coca, Fanta, Sprite',
-        desc:'Bebida familiar de 1.5 litros. Coca Cola, Fanta o Sprite.',
-        tags:['Para compartir'],
-        img:'https://images.unsplash.com/photo-1624552184280-9e9631bbeee9?auto=format&fit=crop&w=600&q=75' },
-      { name:'Bebida Lata', price:'$800', short:'355ml, varios sabores',
-        desc:'Lata individual de 355ml. Varios sabores disponibles.',
-        tags:['Individual'],
-        img:'https://images.unsplash.com/photo-1581636625402-29b2a704ef14?auto=format&fit=crop&w=600&q=75' },
-      { name:'Jugo Natural', price:'$1.200', short:'Frutas frescas de temporada',
-        desc:'Jugo natural recién exprimido de frutas de temporada. Sin azúcar adicional.',
-        tags:['Natural','Sin azúcar'], badge:'veg',
-        img:'https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=600&q=75' },
-      { name:'Agua Mineral', price:'$700', short:'500ml, con o sin gas',
-        desc:'Agua mineral Cachantun 500ml, con o sin gas.',
-        tags:['500ml'],
-        img:'https://images.unsplash.com/photo-1560847468-5eef0e58881c?auto=format&fit=crop&w=600&q=75' },
-      { name:'Cerveza Artesanal', price:'$2.500', short:'Arica Local · 330ml',
-        desc:'Cerveza artesanal de Arica y Parinacota. Estilo IPA, Stout o Rubia.',
-        tags:['Artesanal','Local'], badge:'new',
-        img:'https://images.unsplash.com/photo-1608270586620-248524c67de9?auto=format&fit=crop&w=600&q=75' }
+  {
+    "key": "pastas",
+    "title": "Pastas",
+    "subtitle": "Caseras, con salsas de la casa",
+    "thumb": "https://images.unsplash.com/photo-1600335895229-6e9bfd668c58?auto=format&fit=crop&w=200&q=70",
+    "items": [
+      {
+        "name": "Spaghetti Bolognesa",
+        "price": "$7.900",
+        "short": "Salsa de carne lentamente cocida",
+        "desc": "Spaghetti al dente bañado en salsa boloñesa de carne cocida a fuego lento con tomate y hierbas. Espolvoreado con queso.",
+        "img": "https://images.unsplash.com/photo-1567620832903-9fc6debc209f?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Clásico",
+          "Casero"
+        ],
+        "hidden": false
+      },
+      {
+        "name": "Fettuccine Alfredo",
+        "price": "$8.500",
+        "short": "Cremosa salsa de queso y mantequilla",
+        "desc": "Fettuccine en cremosa salsa Alfredo de mantequilla, crema y queso parmesano. Suave y reconfortante.",
+        "img": "https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Cremoso"
+        ],
+        "hidden": false
+      },
+      {
+        "name": "Lasaña de Carne",
+        "price": "$8.900",
+        "short": "Capas de pasta, carne y queso gratinado",
+        "desc": "Lasaña casera con capas de pasta, salsa de carne, bechamel y queso gratinado al horno. Un plato completo.",
+        "img": "https://images.unsplash.com/photo-1565299543923-37dd37887442?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Al horno",
+          "Favorito"
+        ],
+        "badge": "best",
+        "hidden": false
+      },
+      {
+        "name": "Spaghetti a la Pescatore",
+        "price": "$9.900",
+        "short": "Con mariscos surtidos y salsa de tomate",
+        "desc": "Spaghetti con mariscos surtidos salteados en salsa de tomate, ajo y vino blanco. Sabor a mar en cada bocado.",
+        "img": "https://images.unsplash.com/photo-1560847468-5eef0e58881c?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Mariscos"
+        ],
+        "badge": "new",
+        "hidden": false
+      }
     ]
   },
-  { key:'postres', title:'Postres', subtitle:'Dulces tradicionales chilenos',
-    thumb:'https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=200&q=70',
-    items:[
-      { name:'Leche Asada', price:'$2.200', short:'Tradicional postre chileno',
-        desc:'Leche asada casera con costra de azúcar caramelizada. Receta tradicional ariqueña.',
-        tags:['Casero','Tradicional'], badge:'best',
-        img:'https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=600&q=75' },
-      { name:'Torta de Choclo', price:'$2.500', short:'Dulce nortino, con manjar',
-        desc:'Torta dulce de choclo con manjar y nueces. Postre tradicional del norte.',
-        tags:['Regional','Casero'], badge:'new',
-        img:'https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=600&q=75' },
-      { name:'Helado Artesanal', price:'$1.800', short:'Dos bochas, varios sabores',
-        desc:'Helado artesanal de la región. Lúcuma, frutilla, vainilla, chocolate o murta.',
-        tags:['Artesanal','Local'],
-        img:'https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?auto=format&fit=crop&w=600&q=75' },
-      { name:'Mote con Huesillo', price:'$1.800', short:'Bebida-tradicional chilena',
-        desc:'Mote con huesillo casero con durazno deshidratado, mote de trigo y jugo dulce.',
-        tags:['Tradicional','Casero'], badge:'best',
-        img:'https://images.unsplash.com/photo-1505252585461-04db1eb84625?auto=format&fit=crop&w=600&q=75' }
+  {
+    "key": "ensaladas",
+    "title": "Ensaladas",
+    "subtitle": "Frescas del valle de Azapa",
+    "thumb": "https://images.unsplash.com/photo-1587593810167-a84920ea0781?auto=format&fit=crop&w=200&q=70",
+    "items": [
+      {
+        "name": "Ensalada César con Pollo",
+        "price": "$7.500",
+        "short": "Lechuga, pollo, crotones y parmesano",
+        "desc": "Lechuga romana crocante con láminas de pollo a la plancha, crotones, queso parmesano y aderezo César de la casa.",
+        "img": "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Fresca",
+          "Con pollo"
+        ],
+        "badge": "best",
+        "hidden": false
+      },
+      {
+        "name": "Ensalada Chilena",
+        "price": "$3.500",
+        "short": "Tomate, cebolla y cilantro",
+        "desc": "Clásica ensalada chilena de tomate, cebolla en pluma y cilantro fresco, aliñada con aceite de oliva y limón.",
+        "img": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Vegetariana",
+          "Clásica"
+        ],
+        "badge": "veg",
+        "hidden": false
+      },
+      {
+        "name": "Ensalada a la Criolla",
+        "price": "$4.500",
+        "short": "Tomate, palta, choclo y cebolla",
+        "desc": "Mezcla criolla de tomate, palta, choclo y cebolla morada, fresca y colorida. Acompañamiento perfecto.",
+        "img": "https://images.unsplash.com/photo-1505252585461-04db1eb84625?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Vegetariana"
+        ],
+        "badge": "veg",
+        "hidden": false
+      },
+      {
+        "name": "Ensalada Mixta",
+        "price": "$4.900",
+        "short": "Lechuga, tomate, zanahoria y palta",
+        "desc": "Ensalada mixta de lechuga, tomate, zanahoria rallada y palta, con aliño de la casa. Liviana y nutritiva.",
+        "img": "https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Vegetariana",
+          "Liviana"
+        ],
+        "badge": "veg",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "key": "acompanamientos",
+    "title": "Acompañamientos",
+    "subtitle": "Para completar tu plato",
+    "thumb": "https://images.unsplash.com/photo-1567620832903-9fc6debc209f?auto=format&fit=crop&w=200&q=70",
+    "items": [
+      {
+        "name": "Papas Fritas",
+        "price": "$3.500",
+        "short": "Doradas y crujientes",
+        "desc": "Porción de papas fritas doradas, crujientes por fuera y suaves por dentro. El acompañamiento infaltable.",
+        "img": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Clásico"
+        ],
+        "badge": "best",
+        "hidden": false
+      },
+      {
+        "name": "Papas Fritas con Queso",
+        "price": "$4.900",
+        "short": "Con queso fundido encima",
+        "desc": "Papas fritas cubiertas con abundante queso fundido. Para los amantes del queso.",
+        "img": "https://images.unsplash.com/photo-1606756790138-261d2b21cd75?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Para compartir"
+        ],
+        "hidden": false
+      },
+      {
+        "name": "Arroz Graneado",
+        "price": "$2.500",
+        "short": "Grano suelto, punto perfecto",
+        "desc": "Arroz graneado bien suelto, en su punto, ideal para acompañar carnes y pescados.",
+        "img": "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Guarnición"
+        ],
+        "hidden": false
+      },
+      {
+        "name": "Puré de Papas",
+        "price": "$2.900",
+        "short": "Cremoso, con mantequilla",
+        "desc": "Puré de papas cremoso y suave, preparado con mantequilla y un toque de leche.",
+        "img": "https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Casero"
+        ],
+        "hidden": false
+      },
+      {
+        "name": "Papas Rústicas",
+        "price": "$3.900",
+        "short": "Con cáscara y especias",
+        "desc": "Gajos de papa rústica con cáscara, sazonados con especias y horneados. Sabrosas y distintas.",
+        "img": "https://images.unsplash.com/photo-1624552184280-9e9631bbeee9?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Al horno"
+        ],
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "key": "cocteles",
+    "title": "Cócteles",
+    "subtitle": "Excelentes cócteles de la casa",
+    "thumb": "https://images.unsplash.com/photo-1560847468-5eef0e58881c?auto=format&fit=crop&w=200&q=70",
+    "items": [
+      {
+        "name": "Pisco Sour",
+        "price": "$4.500",
+        "short": "El clásico chileno",
+        "desc": "Pisco sour tradicional con jugo de limón de pica fresco, azúcar y un toque de amargo. Espumoso y equilibrado.",
+        "img": "https://images.unsplash.com/photo-1608270586620-248524c67de9?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Clásico"
+        ],
+        "badge": "best",
+        "hidden": false
+      },
+      {
+        "name": "Mango Sour",
+        "price": "$4.900",
+        "short": "Con pulpa de mango del valle",
+        "desc": "Variante frutal del sour con pulpa de mango fresco. Dulce, ácido y muy refrescante.",
+        "img": "https://images.unsplash.com/photo-1607301405390-d831c242f59b?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Frutal"
+        ],
+        "badge": "new",
+        "hidden": false
+      },
+      {
+        "name": "Piña Colada",
+        "price": "$5.500",
+        "short": "Cremosa, con piña y coco",
+        "desc": "Cóctel cremoso de ron, piña y crema de coco, servido bien frío. Un clásico tropical.",
+        "img": "https://images.unsplash.com/photo-1604908554007-1d901d9e0a56?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Tropical",
+          "Cremoso"
+        ],
+        "hidden": false
+      },
+      {
+        "name": "Mojito",
+        "price": "$4.900",
+        "short": "Ron, menta, limón y soda",
+        "desc": "Refrescante mojito con ron, hierbabuena fresca, limón y soda. Ideal para el calor de Arica.",
+        "img": "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Refrescante"
+        ],
+        "hidden": false
+      },
+      {
+        "name": "Terremoto",
+        "price": "$4.500",
+        "short": "Vino pipeño y helado de piña",
+        "desc": "El famoso terremoto chileno: vino pipeño con helado de piña y un toque de granadina. Potente y dulce.",
+        "img": "https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Tradicional"
+        ],
+        "badge": "hot",
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "key": "bebestibles",
+    "title": "Bebestibles",
+    "subtitle": "Bebidas, jugos y cervezas",
+    "thumb": "https://images.unsplash.com/photo-1505252585461-04db1eb84625?auto=format&fit=crop&w=200&q=70",
+    "items": [
+      {
+        "name": "Bebida en Lata",
+        "price": "$1.800",
+        "short": "Línea Coca-Cola, 350ml",
+        "desc": "Bebida en lata a elección de la línea Coca-Cola, bien fría.",
+        "img": "https://images.unsplash.com/photo-1600335895229-6e9bfd668c58?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Frío"
+        ],
+        "hidden": false
+      },
+      {
+        "name": "Jugo Natural",
+        "price": "$2.500",
+        "short": "Fruta de estación, sin azúcar añadida",
+        "desc": "Jugo natural preparado con fruta fresca de estación. Consulta los sabores del día.",
+        "img": "https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Natural"
+        ],
+        "hidden": false
+      },
+      {
+        "name": "Limonada Menta-Jengibre",
+        "price": "$2.900",
+        "short": "Refrescante y aromática",
+        "desc": "Limonada natural con hojas de menta y jengibre fresco. Refrescante y perfecta para el clima ariqueño.",
+        "img": "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Refrescante"
+        ],
+        "badge": "new",
+        "hidden": false
+      },
+      {
+        "name": "Agua Mineral",
+        "price": "$1.500",
+        "short": "Con o sin gas, 500ml",
+        "desc": "Agua mineral embotellada, con o sin gas.",
+        "img": "https://images.unsplash.com/photo-1587593810167-a84920ea0781?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Frío"
+        ],
+        "hidden": false
+      },
+      {
+        "name": "Cerveza Nacional",
+        "price": "$3.000",
+        "short": "Botella o schop, bien helada",
+        "desc": "Cerveza nacional a elección, servida bien helada en botella o schop.",
+        "img": "https://images.unsplash.com/photo-1581636625402-29b2a704ef14?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Frío"
+        ],
+        "hidden": false
+      }
+    ]
+  },
+  {
+    "key": "postres",
+    "title": "Postres",
+    "subtitle": "El dulce final",
+    "thumb": "https://images.unsplash.com/photo-1606756790138-261d2b21cd75?auto=format&fit=crop&w=200&q=70",
+    "items": [
+      {
+        "name": "Leche Asada",
+        "price": "$3.500",
+        "short": "Casera, con caramelo",
+        "desc": "Leche asada casera de textura suave, con una capa de caramelo tostado. Postre tradicional chileno.",
+        "img": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Casero",
+          "Clásico"
+        ],
+        "badge": "best",
+        "hidden": false
+      },
+      {
+        "name": "Mote con Huesillo",
+        "price": "$2.900",
+        "short": "Refrescante y tradicional",
+        "desc": "Mote de trigo con huesillo (durazno deshidratado) en jugo dulce y frío. El refresco-postre más chileno.",
+        "img": "https://images.unsplash.com/photo-1567620832903-9fc6debc209f?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Tradicional",
+          "Refrescante"
+        ],
+        "hidden": false
+      },
+      {
+        "name": "Tres Leches",
+        "price": "$3.900",
+        "short": "Bizcocho húmedo bañado en tres leches",
+        "desc": "Suave bizcocho empapado en tres tipos de leche, cubierto con crema. Dulce y esponjoso.",
+        "img": "https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Dulce"
+        ],
+        "badge": "new",
+        "hidden": false
+      },
+      {
+        "name": "Copa de Helado",
+        "price": "$3.500",
+        "short": "Dos bochas con salsa a elección",
+        "desc": "Copa con dos bochas de helado a elección, salsa dulce y un toque de crema.",
+        "img": "https://images.unsplash.com/photo-1565299543923-37dd37887442?auto=format&fit=crop&w=600&q=75",
+        "tags": [
+          "Frío"
+        ],
+        "hidden": false
+      }
     ]
   }
 ];
