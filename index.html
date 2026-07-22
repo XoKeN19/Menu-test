@@ -559,23 +559,42 @@ header {
   padding: 18px 16px 8px;
 }
 
+.menu-section {
+  margin-bottom: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
 .section-head {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 8px 4px 12px;
+  width: 100%;
+  padding: 12px;
+  background: none;
+  border: none;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background var(--dur-fast) var(--ease);
 }
+.section-head:active { background: var(--surface-2); }
 .section-head .sec-thumb {
-  width: 56px;
-  height: 56px;
+  width: 52px;
+  height: 52px;
   border-radius: var(--r-md);
   object-fit: cover;
   box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
 }
-.section-head .sec-info { flex: 1; }
+.section-head .sec-info { flex: 1; min-width: 0; }
 .section-head .sec-title {
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 800;
   color: var(--ink);
   line-height: 1.1;
@@ -586,6 +605,9 @@ header {
   font-weight: 500;
   margin-top: 2px;
   letter-spacing: 0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .section-head .sec-count {
   font-size: 11px;
@@ -594,13 +616,37 @@ header {
   background: rgba(139,29,29,0.08);
   padding: 4px 10px;
   border-radius: var(--r-pill);
+  flex-shrink: 0;
 }
+.section-head .sec-chevron {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--brand);
+  transition: transform var(--dur) var(--ease-spring);
+  transform: rotate(90deg);
+}
+.section-head .sec-chevron svg { width: 16px; height: 16px; }
+.menu-section.collapsed .sec-chevron { transform: rotate(0deg); }
+
+/* ---------- Accordion body ---------- */
+.sec-body {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows var(--dur) var(--ease);
+}
+.menu-section.collapsed .sec-body { grid-template-rows: 0fr; }
+.sec-body > .card-grid { overflow: hidden; min-height: 0; }
 
 /* ---------- Premium Food Card ---------- */
 .card-grid {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  padding: 0 12px 14px;
 }
 
 .food-card {
@@ -1222,14 +1268,14 @@ const menu = [
     "key": "pescados",
     "title": "Pescados y Mariscos",
     "subtitle": "Frescos del Pacífico, al estilo criollo",
-    "thumb": "https://images.unsplash.com/photo-1606756790138-261d2b21cd75?auto=format&fit=crop&w=200&q=70",
+    "thumb": "https://www.themealdb.com/images/media/meals/9q1ci41779735714.jpg",
     "items": [
       {
         "name": "Reineta a lo Pobre",
         "price": "$10.900",
         "short": "Filete frito con huevo, papas y cebolla",
         "desc": "Filete de reineta fresca frito a la sartén, servido a lo pobre: sobre papas fritas doradas, cebolla caramelizada y dos huevos fritos. Un clásico ariqueño abundante.",
-        "img": "https://images.unsplash.com/photo-1606756790138-261d2b21cd75?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/9q1ci41779735714.jpg",
         "tags": [
           "Recomendado",
           "Abundante"
@@ -1242,7 +1288,7 @@ const menu = [
         "price": "$12.500",
         "short": "Congrio dorado con ensalada chilena",
         "desc": "Presa de congrio apanada y frita hasta quedar crujiente por fuera y jugosa por dentro. Acompañado de arroz graneado y ensalada chilena fresca.",
-        "img": "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/9q1ci41779735714.jpg",
         "tags": [
           "Fresco del día",
           "Clásico"
@@ -1254,7 +1300,7 @@ const menu = [
         "price": "$11.900",
         "short": "Con mantequilla de ajo y verduras salteadas",
         "desc": "Filete de salmón a la plancha con mantequilla de ajo y hierbas, acompañado de verduras salteadas y puré rústico. Opción más liviana y sabrosa.",
-        "img": "https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/ikizdm1763760862.jpg",
         "tags": [
           "A la plancha",
           "Liviano"
@@ -1267,7 +1313,7 @@ const menu = [
         "price": "$9.900",
         "short": "Bocados crujientes con salsa tártara",
         "desc": "Trozos de pescado apanados y fritos, crocantes, servidos con papas fritas y salsa tártara de la casa. Perfecto para compartir.",
-        "img": "https://images.unsplash.com/photo-1624552184280-9e9631bbeee9?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/9q1ci41779735714.jpg",
         "tags": [
           "Para compartir",
           "Crujiente"
@@ -1280,7 +1326,7 @@ const menu = [
         "price": "$10.500",
         "short": "Caldillo caliente de mariscos surtidos",
         "desc": "Tradicional paila marina bien caliente con almejas, choritos, machas, camarones y pescado en un fondo aromático. Reconfortante y llena de sabor a mar.",
-        "img": "https://images.unsplash.com/photo-1608270586620-248524c67de9?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/5r5rvx1763287943.jpg",
         "tags": [
           "Caliente",
           "Mariscos"
@@ -1292,7 +1338,7 @@ const menu = [
         "price": "$9.500",
         "short": "Gratinadas con queso al horno",
         "desc": "Machas frescas gratinadas con queso, un toque de vino blanco y mantequilla, servidas al horno. Entrada marina infaltable.",
-        "img": "https://images.unsplash.com/photo-1607301405390-d831c242f59b?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/1525873040.jpg",
         "tags": [
           "Gratinado",
           "Entrada"
@@ -1305,14 +1351,14 @@ const menu = [
     "key": "carnes",
     "title": "Carnes y Milanesas",
     "subtitle": "Milanesas, lomos y bistec a lo pobre",
-    "thumb": "https://images.unsplash.com/photo-1624552184280-9e9631bbeee9?auto=format&fit=crop&w=200&q=70",
+    "thumb": "https://www.themealdb.com/images/media/meals/pbzcrx1763765096.jpg",
     "items": [
       {
         "name": "Milanesa a lo Pobre",
         "price": "$9.900",
         "short": "Milanesa de vacuno con papas, huevo y cebolla",
         "desc": "Milanesa de vacuno apanada y frita, servida a lo pobre con papas fritas, cebolla frita y dos huevos. Porción generosa criolla.",
-        "img": "https://images.unsplash.com/photo-1604908554007-1d901d9e0a56?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/pbzcrx1763765096.jpg",
         "tags": [
           "Abundante",
           "Clásico"
@@ -1325,7 +1371,7 @@ const menu = [
         "price": "$9.500",
         "short": "Con jamón, tomate y queso gratinado",
         "desc": "Milanesa de vacuno cubierta con salsa de tomate, jamón y queso gratinado al horno. Acompañada de papas fritas.",
-        "img": "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/pbzcrx1763765096.jpg",
         "tags": [
           "Gratinado",
           "Favorito"
@@ -1337,7 +1383,7 @@ const menu = [
         "price": "$11.900",
         "short": "Lomo liso con papas, huevo y cebolla",
         "desc": "Jugoso lomo liso a la plancha servido a lo pobre: papas fritas, cebolla caramelizada y huevos fritos. Un plato contundente.",
-        "img": "https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/vussxq1511882648.jpg",
         "tags": [
           "Premium",
           "Abundante"
@@ -1349,7 +1395,7 @@ const menu = [
         "price": "$10.500",
         "short": "Bistec de vacuno bien servido",
         "desc": "Bistec de vacuno a la plancha, tierno y sabroso, acompañado de papas fritas, cebolla frita y huevos. Clásico de la casa.",
-        "img": "https://images.unsplash.com/photo-1600335895229-6e9bfd668c58?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/qysyss1511558054.jpg",
         "tags": [
           "Clásico"
         ],
@@ -1360,7 +1406,7 @@ const menu = [
         "price": "$8.900",
         "short": "Sándwich con palta, tomate y mayo",
         "desc": "Churrasco de vacuno en pan amasado con palta, tomate y mayonesa casera. El sándwich chileno por excelencia.",
-        "img": "https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/djdg8l1784578885.jpg",
         "tags": [
           "Sándwich",
           "Para llevar"
@@ -1373,14 +1419,14 @@ const menu = [
     "key": "pollos",
     "title": "Pollo",
     "subtitle": "A la plancha, apanado y milanesa",
-    "thumb": "https://images.unsplash.com/photo-1604908554007-1d901d9e0a56?auto=format&fit=crop&w=200&q=70",
+    "thumb": "https://www.themealdb.com/images/media/meals/wyxwsp1486979827.jpg",
     "items": [
       {
         "name": "Pollo a la Plancha",
         "price": "$8.900",
         "short": "Pechuga jugosa con ensalada y arroz",
         "desc": "Pechuga de pollo a la plancha condimentada con hierbas, acompañada de arroz graneado y ensalada fresca. Opción sana y sabrosa.",
-        "img": "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/wyxwsp1486979827.jpg",
         "tags": [
           "Liviano",
           "Saludable"
@@ -1392,7 +1438,7 @@ const menu = [
         "price": "$8.500",
         "short": "Apanada crujiente con papas fritas",
         "desc": "Milanesa de pollo apanada y frita, crujiente por fuera y jugosa por dentro, con papas fritas doradas.",
-        "img": "https://images.unsplash.com/photo-1587593810167-a84920ea0781?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/wuyd2h1765655837.jpg",
         "tags": [
           "Clásico",
           "Favorito"
@@ -1405,7 +1451,7 @@ const menu = [
         "price": "$8.900",
         "short": "Presas doradas con papas y ensalada",
         "desc": "Presas de pollo apanadas y fritas, servidas con papas fritas y ensalada chilena. Ideal para toda la familia.",
-        "img": "https://images.unsplash.com/photo-1581636625402-29b2a704ef14?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/40r49m1763197022.jpg",
         "tags": [
           "Familiar"
         ],
@@ -1416,7 +1462,7 @@ const menu = [
         "price": "$9.500",
         "short": "Pechuga con papas, huevo y cebolla",
         "desc": "Pechuga de pollo a la plancha servida a lo pobre con papas fritas, cebolla y huevos fritos. Abundante y rico.",
-        "img": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/wyxwsp1486979827.jpg",
         "tags": [
           "Abundante"
         ],
@@ -1428,14 +1474,14 @@ const menu = [
     "key": "pastas",
     "title": "Pastas",
     "subtitle": "Caseras, con salsas de la casa",
-    "thumb": "https://images.unsplash.com/photo-1600335895229-6e9bfd668c58?auto=format&fit=crop&w=200&q=70",
+    "thumb": "https://www.themealdb.com/images/media/meals/sutysw1468247559.jpg",
     "items": [
       {
         "name": "Spaghetti Bolognesa",
         "price": "$7.900",
         "short": "Salsa de carne lentamente cocida",
         "desc": "Spaghetti al dente bañado en salsa boloñesa de carne cocida a fuego lento con tomate y hierbas. Espolvoreado con queso.",
-        "img": "https://images.unsplash.com/photo-1567620832903-9fc6debc209f?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/sutysw1468247559.jpg",
         "tags": [
           "Clásico",
           "Casero"
@@ -1447,7 +1493,7 @@ const menu = [
         "price": "$8.500",
         "short": "Cremosa salsa de queso y mantequilla",
         "desc": "Fettuccine en cremosa salsa Alfredo de mantequilla, crema y queso parmesano. Suave y reconfortante.",
-        "img": "https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/0jv5gx1661040802.jpg",
         "tags": [
           "Cremoso"
         ],
@@ -1458,7 +1504,7 @@ const menu = [
         "price": "$8.900",
         "short": "Capas de pasta, carne y queso gratinado",
         "desc": "Lasaña casera con capas de pasta, salsa de carne, bechamel y queso gratinado al horno. Un plato completo.",
-        "img": "https://images.unsplash.com/photo-1565299543923-37dd37887442?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/rvxxuy1468312893.jpg",
         "tags": [
           "Al horno",
           "Favorito"
@@ -1471,7 +1517,7 @@ const menu = [
         "price": "$9.900",
         "short": "Con mariscos surtidos y salsa de tomate",
         "desc": "Spaghetti con mariscos surtidos salteados en salsa de tomate, ajo y vino blanco. Sabor a mar en cada bocado.",
-        "img": "https://images.unsplash.com/photo-1560847468-5eef0e58881c?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/5fu4ew1760524857.jpg",
         "tags": [
           "Mariscos"
         ],
@@ -1484,14 +1530,14 @@ const menu = [
     "key": "ensaladas",
     "title": "Ensaladas",
     "subtitle": "Frescas del valle de Azapa",
-    "thumb": "https://images.unsplash.com/photo-1587593810167-a84920ea0781?auto=format&fit=crop&w=200&q=70",
+    "thumb": "https://www.themealdb.com/images/media/meals/pk8wtn1763758591.jpg",
     "items": [
       {
         "name": "Ensalada César con Pollo",
         "price": "$7.500",
         "short": "Lechuga, pollo, crotones y parmesano",
         "desc": "Lechuga romana crocante con láminas de pollo a la plancha, crotones, queso parmesano y aderezo César de la casa.",
-        "img": "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/pk8wtn1763758591.jpg",
         "tags": [
           "Fresca",
           "Con pollo"
@@ -1504,7 +1550,7 @@ const menu = [
         "price": "$3.500",
         "short": "Tomate, cebolla y cilantro",
         "desc": "Clásica ensalada chilena de tomate, cebolla en pluma y cilantro fresco, aliñada con aceite de oliva y limón.",
-        "img": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/6cskio1763338156.jpg",
         "tags": [
           "Vegetariana",
           "Clásica"
@@ -1517,7 +1563,7 @@ const menu = [
         "price": "$4.500",
         "short": "Tomate, palta, choclo y cebolla",
         "desc": "Mezcla criolla de tomate, palta, choclo y cebolla morada, fresca y colorida. Acompañamiento perfecto.",
-        "img": "https://images.unsplash.com/photo-1505252585461-04db1eb84625?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/1549542994.jpg",
         "tags": [
           "Vegetariana"
         ],
@@ -1529,7 +1575,7 @@ const menu = [
         "price": "$4.900",
         "short": "Lechuga, tomate, zanahoria y palta",
         "desc": "Ensalada mixta de lechuga, tomate, zanahoria rallada y palta, con aliño de la casa. Liviana y nutritiva.",
-        "img": "https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/6awyvm1782685205.jpg",
         "tags": [
           "Vegetariana",
           "Liviana"
@@ -1543,14 +1589,14 @@ const menu = [
     "key": "acompanamientos",
     "title": "Acompañamientos",
     "subtitle": "Para completar tu plato",
-    "thumb": "https://images.unsplash.com/photo-1567620832903-9fc6debc209f?auto=format&fit=crop&w=200&q=70",
+    "thumb": "https://www.themealdb.com/images/media/meals/j223gc1784579841.jpg",
     "items": [
       {
         "name": "Papas Fritas",
         "price": "$3.500",
         "short": "Doradas y crujientes",
         "desc": "Porción de papas fritas doradas, crujientes por fuera y suaves por dentro. El acompañamiento infaltable.",
-        "img": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/j223gc1784579841.jpg",
         "tags": [
           "Clásico"
         ],
@@ -1562,7 +1608,7 @@ const menu = [
         "price": "$4.900",
         "short": "Con queso fundido encima",
         "desc": "Papas fritas cubiertas con abundante queso fundido. Para los amantes del queso.",
-        "img": "https://images.unsplash.com/photo-1606756790138-261d2b21cd75?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/j223gc1784579841.jpg",
         "tags": [
           "Para compartir"
         ],
@@ -1573,7 +1619,7 @@ const menu = [
         "price": "$2.500",
         "short": "Grano suelto, punto perfecto",
         "desc": "Arroz graneado bien suelto, en su punto, ideal para acompañar carnes y pescados.",
-        "img": "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/j8c1d51782772399.jpg",
         "tags": [
           "Guarnición"
         ],
@@ -1584,7 +1630,7 @@ const menu = [
         "price": "$2.900",
         "short": "Cremoso, con mantequilla",
         "desc": "Puré de papas cremoso y suave, preparado con mantequilla y un toque de leche.",
-        "img": "https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/b5ft861583188991.jpg",
         "tags": [
           "Casero"
         ],
@@ -1595,7 +1641,7 @@ const menu = [
         "price": "$3.900",
         "short": "Con cáscara y especias",
         "desc": "Gajos de papa rústica con cáscara, sazonados con especias y horneados. Sabrosas y distintas.",
-        "img": "https://images.unsplash.com/photo-1624552184280-9e9631bbeee9?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/1550441882.jpg",
         "tags": [
           "Al horno"
         ],
@@ -1607,14 +1653,14 @@ const menu = [
     "key": "cocteles",
     "title": "Cócteles",
     "subtitle": "Excelentes cócteles de la casa",
-    "thumb": "https://images.unsplash.com/photo-1560847468-5eef0e58881c?auto=format&fit=crop&w=200&q=70",
+    "thumb": "https://www.thecocktaildb.com/images/media/drink/tsssur1439907622.jpg",
     "items": [
       {
         "name": "Pisco Sour",
         "price": "$4.500",
         "short": "El clásico chileno",
         "desc": "Pisco sour tradicional con jugo de limón de pica fresco, azúcar y un toque de amargo. Espumoso y equilibrado.",
-        "img": "https://images.unsplash.com/photo-1608270586620-248524c67de9?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.thecocktaildb.com/images/media/drink/tsssur1439907622.jpg",
         "tags": [
           "Clásico"
         ],
@@ -1626,7 +1672,7 @@ const menu = [
         "price": "$4.900",
         "short": "Con pulpa de mango del valle",
         "desc": "Variante frutal del sour con pulpa de mango fresco. Dulce, ácido y muy refrescante.",
-        "img": "https://images.unsplash.com/photo-1607301405390-d831c242f59b?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.thecocktaildb.com/images/media/drink/wfqmgm1630406820.jpg",
         "tags": [
           "Frutal"
         ],
@@ -1638,7 +1684,7 @@ const menu = [
         "price": "$5.500",
         "short": "Cremosa, con piña y coco",
         "desc": "Cóctel cremoso de ron, piña y crema de coco, servido bien frío. Un clásico tropical.",
-        "img": "https://images.unsplash.com/photo-1604908554007-1d901d9e0a56?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.thecocktaildb.com/images/media/drink/upgsue1668419912.jpg",
         "tags": [
           "Tropical",
           "Cremoso"
@@ -1650,7 +1696,7 @@ const menu = [
         "price": "$4.900",
         "short": "Ron, menta, limón y soda",
         "desc": "Refrescante mojito con ron, hierbabuena fresca, limón y soda. Ideal para el calor de Arica.",
-        "img": "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.thecocktaildb.com/images/media/drink/metwgh1606770327.jpg",
         "tags": [
           "Refrescante"
         ],
@@ -1661,7 +1707,7 @@ const menu = [
         "price": "$4.500",
         "short": "Vino pipeño y helado de piña",
         "desc": "El famoso terremoto chileno: vino pipeño con helado de piña y un toque de granadina. Potente y dulce.",
-        "img": "https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.thecocktaildb.com/images/media/drink/txustu1473344310.jpg",
         "tags": [
           "Tradicional"
         ],
@@ -1674,14 +1720,14 @@ const menu = [
     "key": "bebestibles",
     "title": "Bebestibles",
     "subtitle": "Bebidas, jugos y cervezas",
-    "thumb": "https://images.unsplash.com/photo-1505252585461-04db1eb84625?auto=format&fit=crop&w=200&q=70",
+    "thumb": "https://www.thecocktaildb.com/images/media/drink/wmkbfj1606853905.jpg",
     "items": [
       {
         "name": "Bebida en Lata",
         "price": "$1.800",
         "short": "Línea Coca-Cola, 350ml",
         "desc": "Bebida en lata a elección de la línea Coca-Cola, bien fría.",
-        "img": "https://images.unsplash.com/photo-1600335895229-6e9bfd668c58?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.thecocktaildb.com/images/media/drink/wmkbfj1606853905.jpg",
         "tags": [
           "Frío"
         ],
@@ -1692,7 +1738,7 @@ const menu = [
         "price": "$2.500",
         "short": "Fruta de estación, sin azúcar añadida",
         "desc": "Jugo natural preparado con fruta fresca de estación. Consulta los sabores del día.",
-        "img": "https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.thecocktaildb.com/images/media/drink/b3n0ge1503565473.jpg",
         "tags": [
           "Natural"
         ],
@@ -1703,7 +1749,7 @@ const menu = [
         "price": "$2.900",
         "short": "Refrescante y aromática",
         "desc": "Limonada natural con hojas de menta y jengibre fresco. Refrescante y perfecta para el clima ariqueño.",
-        "img": "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.thecocktaildb.com/images/media/drink/b3n0ge1503565473.jpg",
         "tags": [
           "Refrescante"
         ],
@@ -1715,7 +1761,7 @@ const menu = [
         "price": "$1.500",
         "short": "Con o sin gas, 500ml",
         "desc": "Agua mineral embotellada, con o sin gas.",
-        "img": "https://images.unsplash.com/photo-1587593810167-a84920ea0781?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.thecocktaildb.com/images/media/drink/yqstxr1479209367.jpg",
         "tags": [
           "Frío"
         ],
@@ -1726,7 +1772,7 @@ const menu = [
         "price": "$3.000",
         "short": "Botella o schop, bien helada",
         "desc": "Cerveza nacional a elección, servida bien helada en botella o schop.",
-        "img": "https://images.unsplash.com/photo-1581636625402-29b2a704ef14?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.thecocktaildb.com/images/media/drink/bje5401485619578.jpg",
         "tags": [
           "Frío"
         ],
@@ -1738,14 +1784,14 @@ const menu = [
     "key": "postres",
     "title": "Postres",
     "subtitle": "El dulce final",
-    "thumb": "https://images.unsplash.com/photo-1606756790138-261d2b21cd75?auto=format&fit=crop&w=200&q=70",
+    "thumb": "https://www.themealdb.com/images/media/meals/0s80wo1764374393.jpg",
     "items": [
       {
         "name": "Leche Asada",
         "price": "$3.500",
         "short": "Casera, con caramelo",
         "desc": "Leche asada casera de textura suave, con una capa de caramelo tostado. Postre tradicional chileno.",
-        "img": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/0s80wo1764374393.jpg",
         "tags": [
           "Casero",
           "Clásico"
@@ -1758,7 +1804,7 @@ const menu = [
         "price": "$2.900",
         "short": "Refrescante y tradicional",
         "desc": "Mote de trigo con huesillo (durazno deshidratado) en jugo dulce y frío. El refresco-postre más chileno.",
-        "img": "https://images.unsplash.com/photo-1567620832903-9fc6debc209f?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/ssxvup1511387476.jpg",
         "tags": [
           "Tradicional",
           "Refrescante"
@@ -1770,7 +1816,7 @@ const menu = [
         "price": "$3.900",
         "short": "Bizcocho húmedo bañado en tres leches",
         "desc": "Suave bizcocho empapado en tres tipos de leche, cubierto con crema. Dulce y esponjoso.",
-        "img": "https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/rwuyqx1511383174.jpg",
         "tags": [
           "Dulce"
         ],
@@ -1782,7 +1828,7 @@ const menu = [
         "price": "$3.500",
         "short": "Dos bochas con salsa a elección",
         "desc": "Copa con dos bochas de helado a elección, salsa dulce y un toque de crema.",
-        "img": "https://images.unsplash.com/photo-1565299543923-37dd37887442?auto=format&fit=crop&w=600&q=75",
+        "img": "https://www.themealdb.com/images/media/meals/1xscby1764790242.jpg",
         "tags": [
           "Frío"
         ],
@@ -1871,6 +1917,7 @@ const chips = document.querySelectorAll('.chip');
 
 let currentFilter = 'all';
 let currentSearch = '';
+const collapsedCats = new Set();
 
 function renderMenu() {
   const q = currentSearch.trim().toLowerCase();
@@ -1896,16 +1943,19 @@ function renderMenu() {
     if (items.length === 0) return;
     totalShown += items.length;
 
+    const isCollapsed = !q && collapsedCats.has(cat.key);
     html += `
-      <div class="menu-section">
-        <div class="section-head">
+      <div class="menu-section${isCollapsed ? ' collapsed' : ''}" data-cat="${cat.key}">
+        <button class="section-head" type="button" data-toggle="${cat.key}" aria-expanded="${isCollapsed ? 'false' : 'true'}">
           <img class="sec-thumb" src="${cat.thumb}" alt="${cat.title}" loading="lazy">
           <div class="sec-info">
             <div class="sec-title">${cat.title}</div>
             <div class="sec-sub">${cat.subtitle}</div>
           </div>
           <div class="sec-count">${items.length} platos</div>
-        </div>
+          <span class="sec-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+        </button>
+        <div class="sec-body">
         <div class="card-grid">
           ${items.map((it, i) => `
             <div class="food-card" data-cat="${cat.key}" data-name="${it.name}" style="animation-delay: ${i * 0.05}s;">
@@ -1924,6 +1974,7 @@ function renderMenu() {
             </div>
           `).join('')}
         </div>
+        </div>
       </div>
     `;
   });
@@ -1939,6 +1990,17 @@ function renderMenu() {
   }
 
   list.innerHTML = html;
+
+  // Bind accordion headers -> toggle collapse
+  document.querySelectorAll('.section-head').forEach(head => {
+    head.addEventListener('click', () => {
+      const key = head.dataset.toggle;
+      const section = head.closest('.menu-section');
+      const nowCollapsed = section.classList.toggle('collapsed');
+      if (nowCollapsed) collapsedCats.add(key); else collapsedCats.delete(key);
+      head.setAttribute('aria-expanded', nowCollapsed ? 'false' : 'true');
+    });
+  });
 
   // Bind card clicks -> open sheet
   document.querySelectorAll('.food-card').forEach(card => {
