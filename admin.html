@@ -716,7 +716,7 @@ input, textarea, select, button { font-family: inherit; }
 }
 .empty p { font-size: 12px; }
 
-/* ---------- GitHub connection gate ---------- */
+/* ---------- Login gate ---------- */
 .gate {
   position: fixed; inset: 0; z-index: 200;
   background: var(--bg);
@@ -811,24 +811,23 @@ input, textarea, select, button { font-family: inherit; }
 </head>
 <body>
 
-<!-- ============ LOGIN / GITHUB GATE ============ -->
+<!-- ============ LOGIN ============ -->
 <div class="gate" id="gate">
   <div class="gate-box">
-    <div class="gate-logo">P</div>
-    <h2>Panel de administración</h2>
-    <p>Para <strong>publicar</strong> cambios en el menú necesitas un token de acceso de GitHub con permiso sobre este repositorio. Solo quien tenga un token válido puede modificar el menú.</p>
+    <div class="gate-logo">DF</div>
+    <h2>Iniciar sesión</h2>
+    <p>Acceso exclusivo para personal autorizado.</p>
     <div class="gate-field">
-      <label for="gateToken">Token de GitHub (fine-grained)</label>
-      <input type="password" id="gateToken" placeholder="github_pat_..." autocomplete="off" spellcheck="false">
+      <label for="gateUser">Usuario</label>
+      <input type="text" id="gateUser" placeholder="Usuario" autocomplete="username" spellcheck="false">
     </div>
-    <button class="gate-btn" id="gateConnect">Conectar y entrar</button>
+    <div class="gate-field">
+      <label for="gateToken">Contraseña</label>
+      <input type="password" id="gateToken" placeholder="Contraseña" autocomplete="current-password" spellcheck="false">
+    </div>
+    <button class="gate-btn" id="gateConnect">Entrar</button>
     <div class="gate-msg" id="gateMsg"></div>
-    <button class="gate-link" id="gateLocal">Entrar solo en modo local (sin publicar)</button>
-    <div class="gate-help">
-      El token se guarda <strong>solo en este dispositivo</strong> (nunca se sube al repositorio).
-      <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Crear un token fino</a>
-      con acceso <em>solo</em> a este repo y permiso <em>Contents: Read and write</em>.
-    </div>
+    <button class="gate-link" id="gateLocal">Entrar en modo demostración</button>
   </div>
 </div>
 
@@ -841,7 +840,7 @@ input, textarea, select, button { font-family: inherit; }
       <div class="tb-title">Panel de administración</div>
       <div class="tb-sub">Restaurante DON FLORO</div>
     </div>
-    <button class="conn" id="connPill" title="Estado de conexión con GitHub"><span class="dot"></span><span id="connText">Local</span></button>
+    <button class="conn" id="connPill" title="Estado de sesión"><span class="dot"></span><span id="connText">Demo</span></button>
   </div>
 
   <!-- ============ DASHBOARD ============ -->
@@ -865,7 +864,7 @@ input, textarea, select, button { font-family: inherit; }
 
   <!-- ============ TOOLBAR ============ -->
   <div class="toolbar">
-    <button class="tool-btn publish" id="btnPublish">Publicar en GitHub</button>
+    <button class="tool-btn publish" id="btnPublish">Publicar cambios</button>
     <button class="tool-btn add" id="btnAddCat">+ Categoría</button>
     <button class="tool-btn save" id="btnSave">Guardar borrador</button>
     <button class="tool-btn" id="btnExport">Exportar</button>
@@ -907,18 +906,13 @@ input, textarea, select, button { font-family: inherit; }
 <script>
 /* ============================================================
    ADMIN PANEL — Restaurante DON FLORO
-   - Draft is kept in localStorage (key: 'epa_menu_v1'), shared with the
-     main menu for live preview on this device.
-   - "Publicar en GitHub" commits menu.json to the repo via the GitHub API,
-     so every visitor sees the change. Publishing requires a GitHub token
-     (stored only in this browser, never in the repo).
    ============================================================ */
 
 const STORAGE_KEY = 'epa_menu_v1';
-const TOKEN_KEY = 'epa_gh_token';
+const TOKEN_KEY = 'df_session';
 const MENU_FILE = 'menu.json';
 
-/* GitHub repo this panel publishes to. If you fork the repo, change these. */
+/* Remote sync config. */
 const GH = {
   owner: 'XoKeN19',
   repo: 'Menu-test',
@@ -2000,15 +1994,15 @@ async function verifyToken(token) {
         'X-GitHub-Api-Version': '2022-11-28'
       }
     });
-    if (res.status === 401) return { ok: false, msg: 'Token inválido o expirado.' };
-    if (res.status === 404) return { ok: false, msg: 'El token no tiene acceso a este repositorio.' };
-    if (!res.ok) return { ok: false, msg: `Error de GitHub (${res.status}).` };
+    if (res.status === 401) return { ok: false, msg: 'auth' };
+    if (res.status === 404) return { ok: false, msg: 'auth' };
+    if (!res.ok) return { ok: false, msg: 'auth' };
     const data = await res.json();
     const canPush = !!(data.permissions && data.permissions.push);
-    if (!canPush) return { ok: false, msg: 'El token no tiene permiso de escritura (Contents: Read and write).' };
+    if (!canPush) return { ok: false, msg: 'auth' };
     return { ok: true, canPush: true };
   } catch (e) {
-    return { ok: false, msg: 'No se pudo conectar con GitHub. Revisa tu internet.' };
+    return { ok: false, net: true, msg: 'net' };
   }
 }
 
@@ -2024,7 +2018,7 @@ async function getFileSha() {
 
 async function publishToGitHub() {
   const token = getToken();
-  if (!token) { openGate(); showToast('Conéctate con GitHub para publicar'); return; }
+  if (!token) { showToast('No puedes publicar sin iniciar sesión correctamente'); openGate(); return; }
   const btn = document.getElementById('btnPublish');
   const original = btn.textContent;
   btn.disabled = true;
@@ -2039,16 +2033,12 @@ async function publishToGitHub() {
     if (sha) body.sha = sha;
     const url = `https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${encodeURIComponent(GH.path)}`;
     const res = await ghRequest(url, { method: 'PUT', body: JSON.stringify(body) });
-    if (res.status === 401) { setToken(''); updateConnUI(); openGate(); throw new Error('Token inválido o expirado.'); }
-    if (res.status === 409) throw new Error('Conflicto: el menú cambió en GitHub. Recarga e intenta de nuevo.');
-    if (!res.ok) {
-      let detail = `Error ${res.status}`;
-      try { const j = await res.json(); if (j.message) detail = j.message; } catch (e) {}
-      throw new Error(detail);
-    }
+    if (res.status === 401) { setToken(''); updateConnUI(); openGate(); throw new Error('Tu sesión expiró. Inicia sesión de nuevo.'); }
+    if (res.status === 409) throw new Error('El menú cambió en el servidor. Recarga e intenta de nuevo.');
+    if (!res.ok) { throw new Error('No se pudieron publicar los cambios. Intenta de nuevo.'); }
     persist();
     lastSaved.textContent = `Publicado ${new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })}`;
-    showToast('Menú publicado en GitHub ✓');
+    showToast('Cambios publicados ✓');
   } catch (e) {
     showToast('Error: ' + e.message);
   } finally {
@@ -2097,7 +2087,7 @@ async function compressImage(file, maxDim = 1600, quality = 0.85) {
 
 /* Upload an image file to the repo. Returns the relative path (e.g. images/x.jpg). */
 async function uploadImage(file, prefix) {
-  if (!getToken()) throw new Error('Conéctate con GitHub para subir imágenes.');
+  if (!getToken()) throw new Error('Inicia sesión para subir imágenes.');
   if (!file.type || !file.type.startsWith('image/')) throw new Error('El archivo no es una imagen.');
   const blob = await compressImage(file);
   const dataUrl = await readAsDataURL(blob);
@@ -2106,12 +2096,8 @@ async function uploadImage(file, prefix) {
   const url = `https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${path}`;
   const body = { message: `Subir imagen ${path}`, content: base64, branch: GH.branch };
   const res = await ghRequest(url, { method: 'PUT', body: JSON.stringify(body) });
-  if (res.status === 401) { setToken(''); updateConnUI(); openGate(); throw new Error('Token inválido o expirado.'); }
-  if (!res.ok) {
-    let detail = `Error ${res.status}`;
-    try { const j = await res.json(); if (j.message) detail = j.message; } catch (e) {}
-    throw new Error(detail);
-  }
+  if (res.status === 401) { setToken(''); updateConnUI(); openGate(); throw new Error('Tu sesión expiró. Inicia sesión de nuevo.'); }
+  if (!res.ok) { throw new Error('No se pudo subir la imagen. Intenta de nuevo.'); }
   return path;
 }
 
@@ -2135,7 +2121,7 @@ function wireUploader(ids, getPrefix) {
 
   if (!getToken()) {
     btnEl.disabled = true;
-    hintEl.textContent = 'Conéctate con GitHub para subir imágenes. También puedes pegar una URL arriba.';
+    hintEl.textContent = 'Inicia sesión para subir imágenes. También puedes pegar una URL arriba.';
     return;
   }
 
@@ -2169,6 +2155,7 @@ function wireUploader(ids, getPrefix) {
    CONNECTION GATE / UI
    ============================================================ */
 const gate = document.getElementById('gate');
+const gateUser = document.getElementById('gateUser');
 const gateToken = document.getElementById('gateToken');
 const gateMsg = document.getElementById('gateMsg');
 const connPill = document.getElementById('connPill');
@@ -2177,25 +2164,30 @@ const connText = document.getElementById('connText');
 function updateConnUI() {
   const online = !!getToken();
   connPill.classList.toggle('online', online);
-  connText.textContent = online ? 'Conectado' : 'Local';
+  connText.textContent = online ? 'Conectado' : 'Demo';
   const pub = document.getElementById('btnPublish');
-  pub.title = online ? 'Publicar los cambios en GitHub' : 'Conéctate con GitHub para publicar';
+  pub.title = online ? 'Publicar los cambios' : 'Inicia sesión para publicar';
 }
 
 function openGate() { gate.classList.remove('hidden'); gateMsg.textContent = ''; gateMsg.className = 'gate-msg'; }
 function closeGate() { gate.classList.add('hidden'); }
 
 document.getElementById('gateConnect').addEventListener('click', async () => {
+  const user = gateUser.value.trim();
   const token = gateToken.value.trim();
-  if (!token) { gateMsg.textContent = 'Ingresa tu token.'; gateMsg.className = 'gate-msg err'; return; }
+  if (!user || !token) { gateMsg.textContent = 'Usuario o contraseña no válidos.'; gateMsg.className = 'gate-msg err'; return; }
   const btn = document.getElementById('gateConnect');
-  btn.disabled = true; btn.textContent = 'Verificando…';
+  btn.disabled = true; btn.textContent = 'Entrando…';
   const result = await verifyToken(token);
-  btn.disabled = false; btn.textContent = 'Conectar y entrar';
-  if (!result.ok) { gateMsg.textContent = result.msg; gateMsg.className = 'gate-msg err'; return; }
+  btn.disabled = false; btn.textContent = 'Entrar';
+  if (!result.ok) {
+    gateMsg.textContent = result.net ? 'No se pudo conectar. Revisa tu internet.' : 'Usuario o contraseña no válidos.';
+    gateMsg.className = 'gate-msg err';
+    return;
+  }
   setToken(token);
-  gateToken.value = '';
-  gateMsg.textContent = 'Conectado ✓'; gateMsg.className = 'gate-msg ok';
+  gateUser.value = ''; gateToken.value = '';
+  gateMsg.textContent = 'Sesión iniciada ✓'; gateMsg.className = 'gate-msg ok';
   updateConnUI();
   loadPublished();
   setTimeout(closeGate, 400);
@@ -2211,10 +2203,10 @@ document.getElementById('gateLocal').addEventListener('click', () => {
 
 connPill.addEventListener('click', () => {
   if (getToken()) {
-    askConfirm('Desconectar', '¿Quitar el token de GitHub de este dispositivo? Podrás seguir editando en local pero no publicar.', () => {
+    askConfirm('Cerrar sesión', '¿Cerrar sesión en este dispositivo? Podrás seguir en modo demostración pero no publicar.', () => {
       setToken('');
       updateConnUI();
-      showToast('Desconectado de GitHub');
+      showToast('Sesión cerrada');
     });
   } else {
     openGate();
