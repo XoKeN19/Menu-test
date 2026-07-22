@@ -421,30 +421,6 @@ input, textarea, select, button { font-family: inherit; }
 .btn-cat.del { color: var(--danger); border-color: rgba(192,57,43,0.25); }
 .btn-cat:active { transform: scale(0.97); }
 
-/* ---------- FAB add category ---------- */
-.fab {
-  position: fixed;
-  right: 18px;
-  bottom: 22px;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--brand-2) 0%, var(--brand-deep) 100%);
-  color: white;
-  border: none;
-  font-size: 28px;
-  font-weight: 300;
-  cursor: pointer;
-  box-shadow: 0 12px 30px rgba(139,29,29,0.4);
-  z-index: 90;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.18s var(--ease);
-}
-.fab:active { transform: scale(0.88) rotate(90deg); }
-@media (min-width: 768px) { .fab { position: absolute; } }
-
 /* ---------- Bottom toolbar ---------- */
 .toolbar {
   position: sticky;
@@ -454,12 +430,14 @@ input, textarea, select, button { font-family: inherit; }
   -webkit-backdrop-filter: blur(20px);
   padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   box-shadow: 0 -1px 0 var(--line);
   z-index: 80;
 }
 .tool-btn {
-  flex: 1;
+  flex: 1 1 88px;
+  min-width: 88px;
   padding: 11px 8px;
   border-radius: var(--r-sm);
   border: 1px solid var(--line);
@@ -477,6 +455,7 @@ input, textarea, select, button { font-family: inherit; }
 .tool-btn.save { background: var(--ink); color: white; border-color: var(--ink); }
 .tool-btn.save:active { background: var(--brand); }
 .tool-btn.danger { color: var(--danger); border-color: rgba(192,57,43,0.25); }
+.tool-btn.add { color: var(--brand); border-color: rgba(139,29,29,0.35); }
 
 /* ---------- Modal / Sheet for editing ---------- */
 .overlay {
@@ -804,6 +783,7 @@ input, textarea, select, button { font-family: inherit; }
 .conn.online { color: var(--success); border-color: rgba(45,100,32,.25); }
 .conn.online .dot { background: var(--success); }
 .tool-btn.publish {
+  flex: 1 1 100%;
   background: linear-gradient(135deg, var(--brand), var(--brand-2));
   color: #fff; border-color: transparent;
 }
@@ -886,14 +866,12 @@ input, textarea, select, button { font-family: inherit; }
   <!-- ============ TOOLBAR ============ -->
   <div class="toolbar">
     <button class="tool-btn publish" id="btnPublish">Publicar en GitHub</button>
+    <button class="tool-btn add" id="btnAddCat">+ Categoría</button>
     <button class="tool-btn save" id="btnSave">Guardar borrador</button>
     <button class="tool-btn" id="btnExport">Exportar</button>
     <button class="tool-btn" id="btnImport">Importar</button>
     <button class="tool-btn danger" id="btnReset">Reset</button>
   </div>
-
-  <!-- ============ FAB ============ -->
-  <button class="fab" id="fabAdd" aria-label="Agregar categoría">+</button>
 
   <!-- Hidden file input for import -->
   <input type="file" id="fileImport" accept="application/json" style="display:none;">
@@ -1979,7 +1957,7 @@ confirmEl.addEventListener('click', e => {
 });
 
 /* ---------- Top add button + FAB ---------- */
-document.getElementById('fabAdd').addEventListener('click', () => openCategoryEditor(null));
+document.getElementById('btnAddCat').addEventListener('click', () => openCategoryEditor(null));
 
 /* ---------- Toolbar actions ---------- */
 document.getElementById('btnSave').addEventListener('click', () => {

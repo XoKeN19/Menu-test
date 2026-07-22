@@ -636,10 +636,12 @@ header {
 .sec-body {
   display: grid;
   grid-template-rows: 1fr;
+  overflow: hidden;
   transition: grid-template-rows var(--dur) var(--ease);
 }
 .menu-section.collapsed .sec-body { grid-template-rows: 0fr; }
 .sec-body > .card-grid { overflow: hidden; min-height: 0; }
+.menu-section.collapsed .sec-body > .card-grid { padding-top: 0; padding-bottom: 0; }
 
 /* ---------- Premium Food Card ---------- */
 .card-grid {
@@ -1917,7 +1919,7 @@ const chips = document.querySelectorAll('.chip');
 
 let currentFilter = 'all';
 let currentSearch = '';
-const collapsedCats = new Set();
+const expandedCats = new Set();
 
 function renderMenu() {
   const q = currentSearch.trim().toLowerCase();
@@ -1943,7 +1945,7 @@ function renderMenu() {
     if (items.length === 0) return;
     totalShown += items.length;
 
-    const isCollapsed = !q && collapsedCats.has(cat.key);
+    const isCollapsed = !q && !expandedCats.has(cat.key);
     html += `
       <div class="menu-section${isCollapsed ? ' collapsed' : ''}" data-cat="${cat.key}">
         <button class="section-head" type="button" data-toggle="${cat.key}" aria-expanded="${isCollapsed ? 'false' : 'true'}">
@@ -1997,7 +1999,7 @@ function renderMenu() {
       const key = head.dataset.toggle;
       const section = head.closest('.menu-section');
       const nowCollapsed = section.classList.toggle('collapsed');
-      if (nowCollapsed) collapsedCats.add(key); else collapsedCats.delete(key);
+      if (nowCollapsed) expandedCats.delete(key); else expandedCats.add(key);
       head.setAttribute('aria-expanded', nowCollapsed ? 'false' : 'true');
     });
   });
