@@ -7,7 +7,7 @@
     "items": [
       {
         "name": "Reineta a lo Pobre",
-        "price": "$10.900",
+        "price": "$11.900",
         "short": "Filete frito con huevo, papas y cebolla",
         "desc": "Filete de reineta fresca frito a la sartén, servido a lo pobre: sobre papas fritas doradas, cebolla caramelizada y dos huevos fritos. Un clásico ariqueño abundante.",
         "img": "https://www.themealdb.com/images/media/meals/9q1ci41779735714.jpg",
@@ -15,8 +15,7 @@
           "Recomendado",
           "Abundante"
         ],
-        "badge": "best",
-        "hidden": false
+        "badge": "best"
       },
       {
         "name": "Congrio Frito",
